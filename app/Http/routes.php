@@ -21,4 +21,8 @@ Route::group(['middleware' => ['web']], function () {
         return view('pages.contact');
     });
 
+    Route::get('game', "GamesController@index");
+
+    Route::get('game/{id}', "GamesController@show");
+
 });

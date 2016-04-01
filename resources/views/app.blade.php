@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
     <head>
@@ -38,9 +37,8 @@
     </head>
     <body>
         <div class="container">
-            <div class="content">
-                <div class="title">Laravel 5</div>
-            </div>
+            @yield('content')
         </div>
+        @yield('footer')
     </body>
 </html>
