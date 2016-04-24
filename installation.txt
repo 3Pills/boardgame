@@ -4,6 +4,7 @@ To get this project working on a default windows computer, complete the followin
 2. Install Composer.
 3. Create a new empty database within the XAMPP phpMyAdmin utility. 
 3. Ensure the ./xampp/php directory is added to the environment path.
+	3a. Open the php directory, open the php.ini file and remove the semicolon at the beginning of ';extension=php_fileinfo.dll', if one exists.
 4. Open the command line tool in the project directory. (either cd to it or enter cmd into the file directory browser while in the project directory)
 5. Run 'composer install' via the cmd in the project directory. Allow dependencies to download.
 6. Rename ".env.example" to ".env.", and open it to edit the following lines:
@@ -11,5 +12,7 @@ To get this project working on a default windows computer, complete the followin
 	6b. Replace DB_USERNAME and DB_PASSWORD with the username and password for admin access to your phpMyAdmin (default is root and an empty password represented with '').
 7. Run 'php artisan key:generate' via the cmd in the project directory. If you have your php path set up properly, the APP_KEY in .env will be regenerated with a random key string.
 8. Run 'php artisan migrate:install' via the cmd in the project directory. This will set up the previously created database with all the tables / columns required by the application.
+
+Download and install the latest version of Redis (2.4.6 as of writing) from https://github.com/rgl/redis/downloads
 
 DONE. You are good to go!

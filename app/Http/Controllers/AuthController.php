@@ -1,15 +1,17 @@
 <?php
 
-namespace App\Http\Controllers\Auth;
+namespace App\Http\Controllers;
 
+use Hash;
+use Auth;
 use App\User;
 use Validator;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateUserRegister;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
-class AuthController extends Controller
-{
+class AuthController extends Controller {
     /*
     |--------------------------------------------------------------------------
     | Registration & Login Controller
@@ -28,31 +30,41 @@ class AuthController extends Controller
      *
      * @var string
      */
-    protected $redirectTo = '/';
+    protected $redirectTo = '/game';
 
     /**
      * Create a new authentication controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->middleware($this->guestMiddleware(), ['except' => 'logout']);
     }
 
     /**
-     * Get a validator for an incoming registration request.
+     * Store user into database.
      *
-     * @param  array  $data
-     * @return \Illuminate\Contracts\Validation\Validator
+     * @param  array $data
+     * @return Response
      */
-    protected function validator(array $data)
-    {
-        return Validator::make($data, [
-            'name' => 'required|max:255',
-            'email' => 'required|email|max:255|unique:users',
-            'password' => 'required|min:6|confirmed',
-        ]);
+    public function create($data) {
+        do {
+            $data['url'] = str_random(8);
+        } while (User::where('url', '=', $data['url'])->get()->count());
+        $data['password'] = Hash::make($data['password']);
+        $user = User::create($data);
+        Auth::guard($this->getGuard())->login($user);
+        return redirect('/user/'.$user->url);
+    }
+
+    /**
+     * Handle a registration request for the application.
+     *
+     * @param  \Illuminate\Http\CreateUserRegister  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function register(CreateUserRegister $request) {
+        return $this->create($request->all());
     }
 
     /**
@@ -60,13 +72,12 @@ class AuthController extends Controller
      *
      * @param  array  $data
      * @return User
-     */
-    protected function create(array $data)
-    {
+    protected function store(array $data) {
         return User::create([
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => bcrypt($data['password']),
         ]);
     }
+     */
 }

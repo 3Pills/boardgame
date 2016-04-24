@@ -1,0 +1,4 @@
+TODO:
+- Fix getChat
+
+- Add email reset / password reset

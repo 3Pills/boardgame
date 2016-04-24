@@ -7,7 +7,11 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.2.*",
-        "doctrine/dbal": "^2.5"
+        "doctrine/dbal": "^2.5",
+        "illuminate/html": "^5.0",
+        "intervention/image": "^2.3",
+        "cartalyst/sentinel": "2.0.*",
+        "vinkla/pusher": "^2.2"
     },
     "require-dev": {
         "fzaninotto/faker": "~1.4",
