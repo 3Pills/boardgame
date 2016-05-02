@@ -27,7 +27,7 @@ class CreateGamesTable extends Migration {
             $table->foreign('player_id4')->references('id')->on('players')->onDelete('set NULL');
 
             $table->boolean('private')->default(false);
-            $table->timestamps();
+            $table->timestamp('created_at');
         });
     }
 

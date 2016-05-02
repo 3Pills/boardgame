@@ -37,21 +37,15 @@ Route::group(['middleware' => ['web']], function() {
         Route::group(['prefix' => '{url}/'], function() {
             Route::get('/', 'GamesController@show');
 
-            Route::post('update/', 'GamesController@update');
-            Route::post('roll/', 'GamesController@roll');
-            Route::post('chat/', 'GamesController@chat');
-            Route::post('getChat/', 'GamesController@getChat');
+            Route::get('update/', 'GamesController@getUpdate');
+            Route::post('update/', 'GamesController@postUpdate');
 
-            Route::get('update/', 'GamesController@update');
-            Route::get('roll/', 'GamesController@roll');
-            Route::get('chat/', 'GamesController@chat');
-            Route::get('getChat/', 'GamesController@getChat');
+            Route::get('chat/', 'GamesController@getChat');
+            Route::post('chat/', 'GamesController@postChat');
+
+            Route::get('roll/', 'GamesController@getRoll');
+            Route::post('roll/', 'GamesController@postRoll');
         });
-
-        Route::post('update/', 'GamesController@update');
-        Route::post('roll/', 'GamesController@roll');
-        Route::post('chat/', 'GamesController@chat');
-        Route::post('getChat/', 'GamesController@getChat');
     });
 
     //Route::get('/admin/users', 'AdminController@viewall');

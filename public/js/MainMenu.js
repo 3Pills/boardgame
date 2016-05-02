@@ -32,51 +32,63 @@ BasicGame.MainMenu.prototype = {
 		}
 	},
 	
-	swappalette: function(bmd, pID) {
-		bmd.load('hisui'); //Reload the original palette. Stops colors becoming 'watered down' due to duplication, eventually.
-		
-		//Optimisation of rgb replacement. Is only done for differing values, as a palette may contain duplicates.
-		//Duplicates are determined via the original palette. Custom palettes may merge colors, causing duplication checks to pointlessly pass.
-		if (bmd.nonDupes) { 
-			for (var slot in bmd.nonDupes) {
-				slot = bmd.nonDupes[slot];
-				//Only replace colors that are not identical.
-				if (bmd.pData[0][slot].join() != bmd.pData[pID][slot].join()) {
-					bmd.replaceRGB(bmd.pData[0][slot][0],bmd.pData[0][slot][1],bmd.pData[0][slot][2],255,bmd.pData[pID][slot][0],bmd.pData[pID][slot][1],bmd.pData[pID][slot][2],255);
-				}
-			}
-		}
-		else { 
-			//Store each different pixel color, so duplicates are not replaced after one iteration.
-			bmd.nonDupes = []; 
-			for (var i = bmd.pData[0].length; i--;) {
-				var joined = bmd.pData[0][i].join();
-				if (bmd.nonDupes[joined] == undefined) {
-					bmd.nonDupes[joined] = i;
-					if (bmd.pData[0][i].join() != bmd.pData[pID][i].join()) {
-						bmd.replaceRGB(bmd.pData[0][i][0],bmd.pData[0][i][1],bmd.pData[0][i][2],255,bmd.pData[pID][i][0],bmd.pData[pID][i][1],bmd.pData[pID][i][2],255);
+	loadpalette: function(sprite, baseTexture, number) {
+		// Select a number within our range of palettes, if argument defined.
+		if (number !== undefined) { sprite.currPalette = game.math.clamp(number, 0, sprite.paletteData.length-1); }		
+
+		// Create array to store the texture data of our palettes.
+		if (!sprite.loadedPalettes) { sprite.loadedPalettes = []; }
+
+		if (sprite.loadedPalettes[sprite.currPalette] === undefined) {
+			//Create a new bitmapdata object to store the sprite palette. Each palette requires its own bitmapdata, as each represents a new texture.
+			sprite.loadedPalettes[sprite.currPalette] = game.make.bitmapData();
+			var bmd = sprite.loadedPalettes[sprite.currPalette];
+			bmd.load(baseTexture); 
+
+			//If we want the default palette, we shouldn't try to replace anything!
+			if (sprite.currPalette != 0) {
+				//Optimisation of rgb replacement. Optimises replaceRGB function call to only be run on different color values.
+				if (!sprite.nonDupes) { 
+					//Store a string of each different combined RGB value, so duplicates are not replaced. Minor optimisation.
+					sprite.nonDupes = []; 
+					for (var i = sprite.paletteData[0].length; i--;) {
+						var joined = sprite.paletteData[0][i].join();
+						if (sprite.nonDupes.indexOf(joined) <= -1) {
+							sprite.nonDupes[i] = joined;
+						}
 					}
 				}
+				var defRGB = sprite.paletteData[0];
+				var newRGB = sprite.paletteData[sprite.currPalette];
+				// Loop through all palette data and replace each color one by one.
+				for (var slot in sprite.nonDupes) {				
+					bmd.replaceRGB(defRGB[slot][0],defRGB[slot][1],defRGB[slot][2],255,newRGB[slot][0],newRGB[slot][1],newRGB[slot][2],255);
+				}
 			}
+			//Store bitmap data and animation data on the game cache, for instant re-access.
+			game.cache.addTextureAtlas(baseTexture+sprite.currPalette, null, bmd.canvas, sprite.atlasData, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
 		}
+		sprite.loadTexture(baseTexture+sprite.currPalette, this.sprite.animations.currentAnim.currentFrame.index, false);
 	},
 	
 	create: function () {
 		game.stage.backgroundColor = '#5577FF';
 		//game.world.setBounds(0, 0, 1920, 1920);
+
 		
-		this.bmd = game.make.bitmapData();
-		//var atlasData = { frames: [] };
-		this.bmd.load('hisui');
-		this.bmd.pData = game.cache.getJSON('hisui-palettes');
-		//bmd.replaceRGB(col[0][5][0],col[0][5][1],col[0][5][2],255,col[1][5][0],col[1][5][1],col[1][5][2],255);
+		this.sprite = game.add.sprite(game.scale.width / 2,game.scale.height / 2,'hisui-idle');
+		this.sprite.anchor.set(0.5);
 		
-		this.pCount = 0;
-		//this.swappalette(this.bmd, 30);
-		this.bmd.atlasData = game.cache.getJSON('hisui-atlas');
-		
-		//console.log(atlasData);
-		game.cache.addTextureAtlas('hisui-colored', null, this.bmd.canvas, this.bmd.atlasData, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+		this.sprite.animations.add('idle', null, 20, true);
+		this.sprite.animations.play('idle');
+
+		this.sprite.currPalette = 0;
+		this.sprite.paletteData = game.cache.getJSON('hisui-palettes');
+		this.sprite.atlasData = game.cache.getJSON('hisui-atlas');
+
+		this.sprite.inputEnabled = true;
+		this.sprite.input.useHandCursor = true;
+		this.sprite.events.onInputDown.add(this.cycleSpriteColor, this, 0, this.sprite, true);
 
 		this.vol_slider = game.add.sprite(40,40,'slider_tab');
 		this.vol_slider.inputEnabled = true;
@@ -94,8 +106,15 @@ BasicGame.MainMenu.prototype = {
 
 	    game.input.addMoveCallback(function(ptr, x, y, down) {
 	    	if (this.vol_slider.moving == true) {
-	    		//this.vol_slider_tween.stop();
-	    		//this.vol_slider_tween.to({x:x}, 100, Phaser.Easing.Linear.None, true);
+
+				var offsetMinMax = game.scale.width / 5;
+				x = game.math.clamp(x, offsetMinMax, game.scale.width - offsetMinMax);
+				var vol = game.math.roundTo(game.math.clamp((x - offsetMinMax) / (game.scale.width - offsetMinMax - offsetMinMax), 0, 1), -3);
+
+				if (this.bgm_loop) {
+					this.bgm_loop.volume = vol;
+					this.bgm_loop.mute = (vol == 0)
+				}
 				this.vol_slider.cameraOffset.x = x;
 	    	}
 	    	this.vol_slider.prevX = this.vol_slider.cameraOffset.x;
@@ -103,10 +122,8 @@ BasicGame.MainMenu.prototype = {
 
 	    //game.camera.follow(this.vol_slider);
 		
-		this.sprite = game.add.sprite(game.scale.width / 2,game.scale.height / 2,'hisui-colored');
-		this.sprite.anchor.set(0.5);
 
-		this.button = game.add.button(game.scale.width / 2, game.scale.height - 100, 'hisui-colored', function(){
+		this.button = game.add.button(game.scale.width / 2, game.scale.height - 100, 'hisui-idle', function(){
 			$.post({
 				url: window.location+'/roll',
 				context: this,
@@ -120,14 +137,7 @@ BasicGame.MainMenu.prototype = {
 		//$.post({ url: window.location+'/enter' });
 
 		//var sprite = game.add.sprite(200,200,'hisui');
-		
-		this.sprite.animations.add('idle', null, 20, true);
-		this.sprite.animations.play('idle');
-		this.sprite.inputEnabled = true;
-		this.sprite.input.useHandCursor = true;
 
-		this.sprite.events.onInputDown.add(this.cycleSpriteColor, this, 0, this.sprite, true);
-		
 		this.inputKeys = game.input.keyboard.addKeys({
 			'up': Phaser.Keyboard.UP,
 			'down': Phaser.Keyboard.DOWN,
@@ -152,13 +162,13 @@ BasicGame.MainMenu.prototype = {
 	    this.timers.chat_ajax.start();
 
 	    //UTC time of the last chat message received. Used to compare messages when pinging database.
-	    this.latest_chat = moment(0).utc().format(); 
+	    this.latest_chat = moment.utc(0).format(); 
 		
-		this.inputKeys.left.onDown.add(this.cycleSpriteColor, this, 0, this.sprite, true);
-		this.inputKeys.right.onDown.add(this.cycleSpriteColor, this, 0, this.sprite, false);
+		this.inputKeys.left.onDown.add(this.cycleSpriteColor, this, 0, this.sprite, false);
+		this.inputKeys.right.onDown.add(this.cycleSpriteColor, this, 0, this.sprite, true);
 		//this.playloop('bgm1_start', 'bgm1_loop');
 		//this.playloop('bgm2_start', 'bgm2_loop');
-		//this.playloop('bgm3_loop');
+		this.playloop('bgm3_loop');
 	},
 
 	chat_key: function(key) {
@@ -176,7 +186,12 @@ BasicGame.MainMenu.prototype = {
 				data: {msg: msg},
 				context: this,
 				success: function(data) {
-					this.chatResponse[this.chatResponse.length] = new Date().toLocaleTimeString() + " - " + data + ": " + msg;
+					this.chatResponse[this.chatResponse.length] = {
+						id: -1,
+						time: new Date().toLocaleTimeString(),
+						name: data,
+						msg: msg
+					}
 		    	}
 			});
 			this.chat_update();
@@ -184,15 +199,25 @@ BasicGame.MainMenu.prototype = {
 	},
 
 	chat_update: function() {
-		$.post({
-			url: window.location+'/getChat',
+		$.get({
+			url: window.location+'/chat',
 			data: {latest_chat : this.latest_chat},
 			context: this,
 			success: function(data) {
+				for (var i = this.chatResponse.length - 1; i >= 0; i--) {
+					if (this.chatResponse[i].id == -1) {
+						this.chatResponse.splice(i, 1);
+					}
+				}
 				for (var msg in data) {
 					if (!isNaN(msg)) {
-						this.latest_chat = data[msg].time;
-						this.chatResponse[this.chatResponse.length] = moment.utc(data[msg].created_at).toDate().toLocaleTimeString() + " - " + data.user_names[data[msg].user_id] + ": " + data[msg].msg;
+						this.latest_chat = moment.utc(data[msg].time).format();
+						this.chatResponse[this.chatResponse.length] = {
+							id: data[msg].id,
+							time: moment.utc(data[msg].created_at).toDate().toLocaleTimeString(),
+							name: data.user_data[data[msg].user_id].name,
+							msg: data[msg].msg
+						};
 						if (this.chatResponse.length > 10){
 							this.chatResponse.shift();
 						}
@@ -209,30 +234,14 @@ BasicGame.MainMenu.prototype = {
 	},
 	
 	cycleSpriteColor: function(key, sprite, upward) {
-		var x = this.sprite.worldPosition.x, y = this.sprite.worldPosition.y;
-		var currAnim = this.sprite.animations.currentAnim.name;
-		var currFrame = this.sprite.animations.currentAnim.currentFrame.index;
-
-		this.pCount = this.pCount + (upward ? 1 : -1);
-		this.pCount = ( this.pCount < 0 ) ? this.bmd.pData.length-1 : ( ( this.pCount >= this.bmd.pData.length ) ? 0 : this.pCount );
-		this.swappalette(this.bmd, this.pCount);
-
-		game.cache.addTextureAtlas('hisui-colored', null, this.bmd.canvas, this.bmd.atlasData, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
-		this.sprite.loadTexture('hisui-colored', this.sprite.animations.currentAnim.currentFrame.index, false);
+		if (!sprite.paletteData) { return; }
+		sprite.currPalette = sprite.currPalette + (upward ? 1 : -1);
+		sprite.currPalette = ( sprite.currPalette < 0 ) ? sprite.paletteData.length-1 : ( ( sprite.currPalette >= sprite.paletteData.length ) ? 0 : sprite.currPalette );
+		this.loadpalette(sprite, 'hisui-idle');
 	},
 
 	update: function () {
 		game.input.enabled = game.input.activePointer.withinGame;
-
-		var offsetMinMax = 200;
-		this.vol_slider.cameraOffset.x = game.math.clamp(this.vol_slider.cameraOffset.x, offsetMinMax, game.scale.width - offsetMinMax);
-		var volRatio = (this.vol_slider.cameraOffset.x - offsetMinMax) / (game.scale.width - offsetMinMax - offsetMinMax);
-		var vol = game.math.roundTo(isFinite(volRatio) ? game.math.clamp(volRatio, 0, 1) : 0, -3);
-
-		if (this.bgm_loop) {
-			this.bgm_loop.volume = vol;
-			this.bgm_loop.mute = (vol == 0)
-		}
 		//if (typeof this.bgm_start !== undefined) {
 		//	this.bgm_start.volume = vol;
 		//}
@@ -257,7 +266,7 @@ BasicGame.MainMenu.prototype = {
         game.debug.line('');
         game.debug.line('Chat: ' + this.chatString);
         for (let msg of this.chatResponse) {
-        	game.debug.line(msg);
+        	game.debug.line(msg.time + ' - ' + msg.name + ': ' + msg.msg);
         }
 
         game.debug.stop();

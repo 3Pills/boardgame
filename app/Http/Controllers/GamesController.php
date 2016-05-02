@@ -59,39 +59,51 @@ class GamesController extends Controller {
         return view('games.game', compact('url'));
     }
 
-
-    public function roll(Request $request, $url) {
+    /**
+     * Handle Roll Request.
+     *
+     * @return Response
+     */
+    public function postRoll(Request $request, $url) {
         return rand(1, 11);
     }
 
-    public function chat(Request $request, $url) {
+    /**
+     * Handle Chat Data.
+     *
+     * @return Response
+     */
+    public function postChat(Request $request, $url) {
         GameMessage::create(['user_id' => $request->user()->id, 'game_id' => Game::where('url', '=', $url)->first()->id, 'msg' => $request->input('msg')]);
         return $request->user()->name;
     }
 
+    /**
+     * Handle Chat Request.
+     *
+     * @return Response
+     */
     public function getChat(Request $request, $url) {
-        //dd(Carbon::parse("1970-01-01T11:00:00"));
+        //We can find the game the chat request was for via the url variable.
         $game = Game::where('url', '=', $url)->first();
         if ($game) {
-            //$msgList = GameMessage::where('game_id', '=', $game->id)->where( 'created_at', '>', Carbon::parse(($request->input('latest_chat'))) )->get();
-            $msgList = GameMessage::where('game_id', '=', $game->id)->get();
+            //Generate a list of all game chat instances after the latest chat the client has.
+            $msgList = GameMessage::where( 'game_id', '=', $game->id )
+                                  ->where( 'created_at', '>', Carbon::parse(($request->input('latest_chat'))) )->get();
+            //Checking if we actually got any results
             if ($msgList->count()) {
-                $data = $msgList->toArray();
-                $data['user_names'] = [];
+                $data = $msgList->toArray(); //Store database data as array.
+
+                //Create user_data entry for storing extra user info, as messages only contain a user's id.
+                $data['user_data'] = []; 
+
+                //Store the data of each user featured in the found messages.
                 foreach ($msgList as $num => $msgData) {
-                    if (!array_key_exists($msgData->user_id, $data['user_names'])) {
-                        $data['user_names'][$msgData->user_id] = User::where('id', '=', $msgData->user_id)->first()->name;
+                    if (!array_key_exists($msgData->user_id, $data['user_data'])) {
+                        $data['user_data'][$msgData->user_id] = User::where('id', '=', $msgData->user_id)->first()->toArray();
                     }
-                    # code...
                 }
-                //$data = [
-                //    [
-                //        "user" => $request->user()->name, 
-                //        "msg" => "PONG",
-                //        "time" => Carbon::now()->toTimeString()
-                //    ],
-                //];
-                return $data;//.":".strval($time->minute);
+                return $data;
             }
         }
     }

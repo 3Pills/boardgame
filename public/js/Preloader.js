@@ -36,9 +36,10 @@ BasicGame.Preloader.prototype = {
 	    // this.load.image('hotdog', 'assets/sprites/hotdog.png');
 	    // this.load.image('starfield', 'assets/skies/deep-space.jpg');
 
-		this.load.atlasJSONHash('hisui', base_url + 'images/hisui/idle.png', base_url + 'images/hisui/idle.json');
+		this.load.atlasJSONHash('hisui-idle', base_url + 'images/hisui/idle.png', base_url + 'images/hisui/idle.json');
+
 		this.load.json('hisui-atlas', base_url + 'images/hisui/idle.json');
-		this.load.json('hisui-palettes', base_url + 'images/hisui/palettes.json');
+		this.load.json('hisui-palettes', base_url + 'images/hisui/hisui-palettes.json');
 		
 		//this.load.audio('music', 'assets/audio/123.mp3');
         this.load.image('slider_tab', base_url + 'images/slider_tab.png');
@@ -50,7 +51,7 @@ BasicGame.Preloader.prototype = {
 		//this.load.audio('bgm2_start', base_url + 'audio/music/take_off_start.ogg');
 		//this.load.audio('bgm2_loop', base_url + 'audio/music/take_off_loop.ogg');
 
-		//this.load.audio('bgm3_loop', base_url + 'audio/music/key/wake_in_the_mornin.ogg');
+		this.load.audio('bgm3_loop', base_url + 'audio/music/key/wake_in_the_mornin.ogg');
 	},
 
 	create: function () {

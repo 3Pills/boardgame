@@ -24,7 +24,7 @@ class CreateUserUpdate extends Request {
         return [
             'name' => 'required|between:4,24|alpha_num',
             'email' => 'required|email|unique:users,email,'.Auth::user()->id,
-            'url' => 'required|alpha_num|unique:users,url,'.Auth::user()->id,
+            'url' => 'required|between:4,32|alpha_num|unique:users,url,'.Auth::user()->id,
             'profile_picture' => 'image',
             'about' => 'max:1000',
         ];

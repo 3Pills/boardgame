@@ -1,0 +1,106 @@
+{
+"frames": [
+	{
+		"filename": "his00_000.png",
+		"frame": {"x":88, "y":106, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_001.png",
+		"frame": {"x":176, "y":212, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_002.png",
+		"frame": {"x":176, "y":106, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_003.png",
+		"frame": {"x":176, "y":0, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_004.png",
+		"frame": {"x":132, "y":212, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_005.png",
+		"frame": {"x":132, "y":106, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_006.png",
+		"frame": {"x":132, "y":0, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_007.png",
+		"frame": {"x":88, "y":212, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_008.png",
+		"frame": {"x":220, "y":0, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_009.png",
+		"frame": {"x":88, "y":0, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_010.png",
+		"frame": {"x":44, "y":212, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_011.png",
+		"frame": {"x":44, "y":106, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_012.png",
+		"frame": {"x":44, "y":0, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_013.png",
+		"frame": {"x":0, "y":212, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_014.png",
+		"frame": {"x":0, "y":106, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	},
+	{
+		"filename": "his00_015.png",
+		"frame": {"x":0, "y":0, "w":43, "h":105},
+		"spriteSourceSize": {"x":0,"y":0,"w":43,"h":105},
+		"sourceSize": {"w":43,"h":105}
+	}
+
+],
+"meta": {
+	"image": "hisui.png",
+	"size": {"w": 264, "h": 318},
+	"scale": "1"
+}
+}
