@@ -27,7 +27,7 @@ Route::group(['middleware' => ['web']], function() {
         Route::get('{url}/', 'UserController@show');
         Route::delete('{url}/', 'UserController@delete');
         Route::get('{url}/settings', 'UserController@edit');
-        Route::put('{url}/settings', 'UserController@update');
+        Route::post('{url}/settings', 'UserController@update');
     });
 
     Route::group(['prefix' => 'game/'], function() {
