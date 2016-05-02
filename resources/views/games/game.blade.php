@@ -2,6 +2,15 @@
 
 @section('title') Game @stop
 
+@section('metadata')
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:site" content="@stephenkoren7" />
+<meta property="og:url" content="{{url('/game/').'/'.$game->url}}" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="{{$game->name}} Lobby" />
+<meta property="og:description" content="Game Lobby for {{$game->name}} on Play Vidya Soon" />
+@stop
+
 @section('css')
 	<style> .navbar { margin: 0px; } </style>
 @stop
@@ -17,12 +26,12 @@
 @stop
 
 @section('scripts-deferred')
-    <script src="https://cdn.jsdelivr.net/phaser/2.4.7/phaser.js"/>
-    <script src="{{ url('/js/Boot.js') }}"/>
+    <script src="https://cdn.jsdelivr.net/phaser/2.4.7/phaser.js"></script>
+    <script src="{{ url('/assets/js/Boot.js') }}"></script>
 
 	<script type="text/javascript">
 		var game;
-		//var game_url = base_url + '{{ 'game/'.$url.'/' }}';
+		//var game_url = base_url + '{{ 'game/'.$game->url.'/' }}';
 
 		function startGame() {
 			if (document.getElementById("button") != null) {
@@ -36,9 +45,9 @@
 		}
 	</script>
 	
-    <script src="{{ url('/js/Preloader.js') }}"/>
-    <script src="{{ url('/js/MainMenu.js') }}"/>
-    <script src="{{ url('/js/Game.js') }}"/>
+    <script src="{{ url('/assets/js/Preloader.js') }}"></script>
+    <script src="{{ url('/assets/js/MainMenu.js') }}"></script>
+    <script src="{{ url('/assets/js/Game.js') }}"></script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"></script>
 @stop

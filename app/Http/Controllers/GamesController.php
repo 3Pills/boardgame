@@ -56,7 +56,7 @@ class GamesController extends Controller {
         if ($game === null) {
             return view('games.404');
         }
-        return view('games.game', compact('url'));
+        return view('games.game', compact('game'));
     }
 
     /**

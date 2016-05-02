@@ -42,7 +42,7 @@
 				<div class="form-group">
 					<label for="profile_picture">Profile Picture:</label>
 					<br>
-					<img src="{{ url(file_exists('./images/avatars/'.$user->url.'.jpg') ? './images/avatars/'.$user->url.'.jpg' : './images/default-avatar.png') }}" alt="avatar" class="img-rounded" style="width:192px;height:192px;"/>
+					<img src="{{url('/assets/images/').(file_exists('./assets/images/avatars/'.$user->url.'.jpg') ? '/avatars/'.$user->url.'.jpg' : '/default-avatar.png')}}" alt="avatar" class="img-rounded" style="width:192px;height:192px;"/>
 					<p>Maximum File Size: 2MB. Dimensions will be cropped to 192x192</p>
 					<div class="col-sm-9"> <input type="file" name="profile_picture"/> </div>
 				</div>

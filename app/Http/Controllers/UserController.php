@@ -63,7 +63,7 @@ class UserController extends Controller {
      */
     public function update(CreateUserUpdate $request) {
         $user = $request->user();
-        $imgDir = public_path().'/images/avatars/';
+        $imgDir = public_path().'/assets/images/avatars/';
         $prevUrl = $user->url;
         $user->update($request->all());
         if ($request->hasFile('profile_picture') && $request->file('profile_picture')->isValid()) {

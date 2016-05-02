@@ -9,7 +9,7 @@
     <title>@yield('title') - PVS</title>
 
     <link media="all" type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>
-    <link media="all" type="text/css" rel="stylesheet" href="{{url('/')}}/css/app.css"/>
+    <link media="all" type="text/css" rel="stylesheet" href="{{url('/assets/css/app.css')}}"/>
     @yield('css')
 </head>
 <body>
@@ -30,7 +30,7 @@
                     <li role="presentation" class="dropdown">
                         <a id="profile-link" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="{{ \URL::to('/user/'.\Auth::user()->url) }}">
                             <span class="navbar-username">{{\Auth::user()->name}}</span>
-                            <img src="{{ url(file_exists('./images/avatars/'.\Auth::user()->url.'.jpg') ? './images/avatars/'.\Auth::user()->url.'.jpg' : './images/default-avatar.png') }}" alt="avatar", class = "img-rounded navbar-profile")/>
+                            <img src="{{url('/assets/images/').(file_exists('./assets/images/avatars/'.$user->url.'.jpg') ? '/avatars/'.\Auth::user()->url.'.jpg' : '/default-avatar.png')}}" alt="avatar", class = "img-rounded navbar-profile")/>
                         </a>
                         <div class="dropdown-menu dropdown-profile" aria-labelledby="profile-link">
                             <div class="profile-field"> <a href="{{ url('user/'.\Auth::user()->url) }}" class="btn-block">Profile</a></div>
