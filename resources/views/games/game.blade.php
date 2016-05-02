@@ -2,15 +2,23 @@
 
 @section('title') Game @stop
 
-@section('includes')
-    <script src="https://cdn.jsdelivr.net/phaser/2.4.7/phaser.js"/>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"/>
-    <script src="{{ url('/js/Boot.js') }}"/>
-    <script src="{{ url('/js/Preloader.js') }}"/>
-    <script src="{{ url('/js/MainMenu.js') }}"/>
-    <script src="{{ url('/js/Game.js') }}"/>
-
+@section('css')
 	<style> .navbar { margin: 0px; } </style>
+@stop
+
+@section('post-content')
+	<div id="button" class="text-center" style="margin:19% 0px;">
+		<button class="btn btn-large btn-default" onclick="startGame()">Let's fuckin gooooo</button>
+	</div>
+	<div class="container-game">
+		<div id="gameContainer"></div>
+		<!--<button class="btn btn-large btn-default" onclick="startGame()">Reload</button>-->
+	</div>
+@stop
+
+@section('scripts-deferred')
+    <script src="https://cdn.jsdelivr.net/phaser/2.4.7/phaser.js"/>
+    <script src="{{ url('/js/Boot.js') }}"/>
 
 	<script type="text/javascript">
 		var game;
@@ -27,14 +35,10 @@
 			game.state.start('Boot');
 		}
 	</script>
-@stop
+	
+    <script src="{{ url('/js/Preloader.js') }}"/>
+    <script src="{{ url('/js/MainMenu.js') }}"/>
+    <script src="{{ url('/js/Game.js') }}"/>
 
-@section('post-content')
-	<div id="button" class="text-center" style="margin:19% 0px;">
-		<button class="btn btn-large btn-default" onclick="startGame()">Let's fuckin gooooo</button>
-	</div>
-	<div class="container-game">
-		<div id="gameContainer"></div>
-		<!--<button class="btn btn-large btn-default" onclick="startGame()">Reload</button>-->
-	</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"/>
 @stop

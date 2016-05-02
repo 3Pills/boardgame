@@ -2,30 +2,6 @@
 
 @section('title') Game Lobby @stop
 
-@section('includes')
-	<!--
-	<style>
-	.navbar {
-		margin: 0px;
-	}
-	</style>
-	<script type="text/javascript">
-		var game;
-
-		function startGame() {
-			if (document.getElementById("button") != null) {
-				document.getElementById("button").remove();
-			}
-
-			//Canvas is used cause FireFox doesn't handle WebGL Sprites very well...
-			game = new Phaser.Game(1024, 576, Phaser.CANVAS, 'gameContainer', BasicGame.Boot, false, false);
-			game.state.add('Boot', BasicGame.Boot);
-			game.state.start('Boot');
-		}
-	</script>
-	-->
-@stop
-
 @section('content')
 <div class="panel panel-default" style="width:700px; margin:auto;">
 	<div class="panel-heading">Create Lobby</div>

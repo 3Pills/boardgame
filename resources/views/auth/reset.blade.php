@@ -1,6 +1,5 @@
 @extends('app')
 
-
 @section('title') Reset Password @stop
 @section('content')
 <div class="container-fluid">
@@ -58,4 +57,4 @@
 		</div>
 	</div>
 </div>
-@endsection
+@stop

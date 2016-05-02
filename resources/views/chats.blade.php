@@ -2,10 +2,6 @@
 
 @section('title') User Chat @stop
 
-@section('includes')
-<script src="js/chats.js"/>
-@stop
-
 @section('content')
 <div class="col-lg-4 col-lg-offset-4">
     <h1 id="greeting">Hello, <span id="username">{{$username}}</span></h1>
@@ -18,4 +14,8 @@
         <input type="text" id="text" class="form-control col-lg-12" autofocus="" onblur="notTyping()">
     </div>
 </div>
+@stop
+
+@section('scripts-deferred')
+<script src="js/chats.js"/>
 @stop

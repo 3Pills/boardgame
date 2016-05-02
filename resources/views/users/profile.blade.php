@@ -2,7 +2,7 @@
 
 @section('title') {{$user->name.'\''.($user->name[strlen($user->name) - 1] != 's' ? 's' : '')}} Profile @stop
 
-@section('includes')
+@section('metadata')
 <meta property="og:url" content="{{url('/user/').'/'.$user->url}}" />
 <meta property="og:type" content="profile" />
 <meta property="og:title" content="{{$user->name.'\''.($user->name[strlen($user->name) - 1] != 's' ? 's' : '')}} Profile" />

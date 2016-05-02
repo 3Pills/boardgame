@@ -2,7 +2,13 @@
 
 @section('title') Welcome! @stop
 
-@section('includes')
+@section('content')
+
+<h1>Welcome to the website!</h1>
+<p>This site will eventually host a pretty good JavaScript-based multiplayer game. For now just register an account and trust me on this one. It's gonna be pretty real tbh.</p>
+@stop
+
+@section('scripts-deferred')
 <script type="text/javascript">
     function memes() {
         $.get({
@@ -11,10 +17,4 @@
         });
     }
 </script>
-@stop
-
-@section('content')
-
-<h1>Welcome to the website!</h1>
-<p>This site will eventually host a pretty good JavaScript-based multiplayer game. For now just register an account and trust me on this one. It's gonna be pretty real tbh.</p>
 @stop
