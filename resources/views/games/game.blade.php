@@ -3,18 +3,14 @@
 @section('title') Game @stop
 
 @section('includes')
-    {!! HTML::script('https://cdn.jsdelivr.net/phaser/2.4.7/phaser.js') !!}
-    {!! HTML::script('https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js') !!}
-    {!! HTML::script('/js/Boot.js') !!}
-    {!! HTML::script('/js/Preloader.js') !!}
-    {!! HTML::script('/js/MainMenu.js') !!}
-    {!! HTML::script('/js/Game.js') !!}
+    <script src="https://cdn.jsdelivr.net/phaser/2.4.7/phaser.js"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.13.0/moment-with-locales.min.js"/>
+    <script src="{{ url('/js/Boot.js') }}"/>
+    <script src="{{ url('/js/Preloader.js') }}"/>
+    <script src="{{ url('/js/MainMenu.js') }}"/>
+    <script src="{{ url('/js/Game.js') }}"/>
 
-	<style>
-	.navbar {
-		margin: 0px;
-	}
-	</style>
+	<style> .navbar { margin: 0px; } </style>
 
 	<script type="text/javascript">
 		var game;

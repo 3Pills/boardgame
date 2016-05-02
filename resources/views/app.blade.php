@@ -3,24 +3,25 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <title>@yield('title') - PVS</title>
 
-    {!! HTML::script('https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js') !!}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
 
-    {!! HTML::style('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css') !!}
-    {!! HTML::script('https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js') !!}
+    <link media="all" type="text/css" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/css/bootstrap.min.css"/>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
 
-    {!! HTML::style('css/app.css') !!}
-
-    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <link media="all" type="text/css" rel="stylesheet" href="{{url('/')}}/css/app.css"/>  
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
             }
         });
-        var base_url = '<?php echo \URL::to('/') ?>/';
+        var base_url = '<?php echo url('/') ?>/';
     </script>
+
     @yield('includes')
 </head>
 <body>
@@ -28,26 +29,26 @@
         <nav class="navbar-container">                
             <ul class="nav navbar-nav">
                 <li>
-                    <a class="navbar-brand" href="{{ \URL::to('/') }}">
+                    <a class="navbar-brand" href="{{ url('/') }}">
                         <span class="navbar-brand-web">Play Vidya Soon</span>
                         <span class="navbar-brand-mob">PVS</span>
                     </a>
                 </li>
-                <li class="nav-item"> {!! HTML::link('/game', "Play") !!} </li>
-                <li class="nav-item"> {!! HTML::link('/user', "Users") !!} </li>
+                <li class="nav-item"><a href="{{ url('/game') }}">Play</a></li>
+                <li class="nav-item"><a href="{{ url('/user') }}">Users</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
                 @if(\Auth::user())
                     <li role="presentation" class="dropdown">
                         <a id="profile-link" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="{{ \URL::to('/user/'.\Auth::user()->url) }}">
                             <span class="navbar-username">{{\Auth::user()->name}}</span>
-                            {!! HTML::image(file_exists('./images/avatars/'.\Auth::user()->url.'.jpg') ? './images/avatars/'.\Auth::user()->url.'.jpg' : './images/default-avatar.png', 'avatar', ['class' => 'img-rounded navbar-profile']) !!}
+                            <img src="{{ url(file_exists('./images/avatars/'.\Auth::user()->url.'.jpg') ? './images/avatars/'.\Auth::user()->url.'.jpg' : './images/default-avatar.png') }}" alt="avatar", class = "img-rounded navbar-profile")/>
                         </a>
                         <div class="dropdown-menu dropdown-profile" aria-labelledby="profile-link">
-                            <div class="profile-field"> {!! HTML::link(\URL::to('user/'.\Auth::user()->url), 'Profile', ['class' => 'btn-block']) !!}</div>
-                            <div class="profile-field"> {!! HTML::link(\URL::to('user/'.\Auth::user()->url.'/settings'), 'Settings', ['class' => 'btn-block']) !!}</div>
+                            <div class="profile-field"> <a href="{{ url('user/'.\Auth::user()->url) }}" class="btn-block">Profile</a></div>
+                            <div class="profile-field"> <a href="{{ url('user/'.\Auth::user()->url.'/settings') }}" class="btn-block">Settings</a></div>
                             <div class="profile-field divider" role="separator"></div>               
-                            <div class="profile-field"> {!! HTML::link(\URL::to('logout'), "Logout", ['class' => 'btn-block']) !!}</div>
+                            <div class="profile-field"> <a href="{{ url('logout') }}" class="btn-block">Logout</a></div>
                         </div>
                     </li>
                 @else
@@ -57,15 +58,15 @@
                             Login <span class="caret"></span>
                         </a>
                         <div class="dropdown-menu dropdown-login" aria-labelledby="login-link">
-                            {!! Form::open(['url' => \URL::to('login'), 'role' => 'form', 'method' => 'POST', 'class' => 'form-horizontal']) !!}
-                                <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                                <div class="login-field"> {!! Form::email('email', null, ['class' => 'form-control', 'placeholder' => 'Email']) !!} </div>
-                                <div class="login-field"> {!! Form::password('password', ['class' => 'form-control', 'placeholder' => 'Password']) !!} </div>
-                                <div class="login-field"> {!! Form::checkbox('remember') !!} {!! Form::label('remember', 'Remember Me') !!} </div>
-                                <div class="login-field"> {!! Form::submit('Login', ['class' => 'btn btn-primary btn-block']) !!} </div>                 
-                            {!! Form::close() !!}
+                            <form method="POST" action="{{ url('/login') }}" role="form" class="form-horizontal" accept-charset="UTF-8" >
+                                <input name="_token" type="hidden" value="{{ csrf_token() }}">
+                                <div class="login-field"> <input type="email" name="email" placeholder="Email" class='form-control'> </div>
+                                <div class="login-field"> <input type="password" name="password" placeholder="Password" class='form-control' > </div>
+                                <div class="login-field"> <input type="checkbox" name="remember" value="1"> <label for="remember">Remember Me</label></div>
+                                <div class="login-field"> <input type="submit" value="Login" class="btn btn-primary btn-block"></div>                 
+                            </form>
                             <div class="login-field divider" role="separator"></div>               
-                            <div class="login-field"> {!! HTML::link(\URL::to('register'), "Don't have an account?", ['class' => 'btn btn-default btn-block']) !!}</div>
+                            <div class="login-field"> <a href="{{url('register')}}" class="btn btn-default btn-block">Don't have an account?</a> </div>
                         </div>
                     </li>
                 @endif
