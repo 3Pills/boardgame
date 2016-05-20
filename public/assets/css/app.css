@@ -14,7 +14,9 @@ h1, h2, h3, h4, h5, h6 {
 
 .container-game {
   width: 100%;
+  height: 100%;
   max-width: 1024px !important;
+  max-height: 768px !important;
   margin: 0px auto; }
 
 .navbar-container {
@@ -88,6 +90,63 @@ h1, h2, h3, h4, h5, h6 {
   bottom: 0;
   width: 100%;
   height: 60px; }
+
+.game-overlay {
+  width: 100%;
+  max-width: 1024px !important;
+  height: 100%;
+  max-height: 768px !important;
+  position: absolute; }
+
+.options {
+  width: 100%;
+  position: absolute;
+  max-width: 1024px !important;
+  padding: 0px 0px 0px 80%; }
+
+.options-window {
+  width: 20%;
+  max-width: 1024px !important;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+  background: #000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); }
+
+.chat {
+  width: 60%;
+  position: absolute;
+  max-width: 1024px !important;
+  margin: 0px 20%; }
+
+.chat-window {
+  width: 100%;
+  max-width: 1024px !important;
+  height: 100%;
+  position: absolute;
+  z-index: 1;
+  background: #000;
+  opacity: 0.4;
+  filter: alpha(opacity=40); }
+
+.chat-text {
+  padding: 4px 4px 4px 16px;
+  position: relative;
+  z-index: 2;
+  color: #FFF;
+  text-shadow: 1px 1px 1px #000000;
+  max-height: 150px !important;
+  overflow-y: scroll; }
+  .chat-text .chat-input {
+    outline: none;
+    background: inherit;
+    border: 0px;
+    text-shadow: 1px 1px 1px #000000; }
+
+input[type=checkbox] {
+  float: left;
+  margin: 4px 4px 0; }
 
 /* Tablet CSS Definitions */
 /* Mobile CSS Definitions */

@@ -16,7 +16,7 @@ Route::group(['middleware' => ['web']], function() {
     Route::get('/', function() { return view('welcome'); });
 
     Route::get('login/', 'AuthController@getLogin');
-    Route::post('login/', 'AuthController@login');
+    Route::post('login/', 'AuthController@postLogin');
     Route::get('logout/', 'AuthController@logout');
 
     Route::get('register/', 'AuthController@getRegister');
@@ -30,7 +30,7 @@ Route::group(['middleware' => ['web']], function() {
         Route::post('{url}/settings', 'UserController@update');
     });
 
-    Route::group(['prefix' => 'game/'], function() {
+    Route::group(['prefix' => 'game/', 'middleware' => 'auth'], function() {
         Route::get('/', 'GamesController@index');
         Route::post('/', 'GamesController@create');
 
@@ -39,6 +39,11 @@ Route::group(['middleware' => ['web']], function() {
 
             Route::get('update/', 'GamesController@getUpdate');
             Route::post('update/', 'GamesController@postUpdate');
+
+
+            Route::post('join/', 'GamesController@postJoin');
+
+            Route::post('ping/', 'GamesController@postPing');
 
             Route::get('chat/', 'GamesController@getChat');
             Route::post('chat/', 'GamesController@postChat');

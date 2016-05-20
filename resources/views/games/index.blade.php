@@ -17,7 +17,7 @@
 			</div>
 		@endif
 		<form method="POST" action="{{ url('/game') }}" role="form" class="form-horizontal" accept-charset="UTF-8">
-			<input type="hidden" name="_token" value="{{ csrf_token() }}">
+			{{ csrf_field() }}
 			<div class="form-group" style="margin-top:12px;">
 				<label for="name" class="control-label col-sm-3">Name:</label>
 				<div class="col-sm-9"> <input type="text" name="name" class="form-control"/> </div>
@@ -49,5 +49,26 @@
 			</div>
 		</form>
 	</div>
+</div>
+
+<?php $mapNames = [1=>'Downtown']; ?>
+<div>
+	<h3>Public Lobbies</h3>
+	@foreach (\App\Game::all()->sortBy('name') as $key=>$game)
+		<div style="min-width:128px; padding:2px;">
+			<a href="{{'game/'.$game->url}}" class="">
+				<div class="panel panel-default panel-body">
+					<img src="{{ url('./assets/images/default-avatar.png') }}" alt="avatar" class="profile-avatar" style="float:left;width:34px;height:34px;margin-right:8px;"/>
+			    	<div>
+			        	<p>Game Name: {{$game->name}}</p>
+			        	<p>Game Map: {{ isset($mapNames[$game->map]) ? $mapNames[$game->map] : "InvalidMap" }} </p>
+						@foreach ($game->players()->get() as $key=>$player)
+				        	<p>{{ $player->id }}</p>
+						@endforeach
+			        </div>
+			    </div>
+		    </a>
+		</div>
+	@endforeach
 </div>
 @stop

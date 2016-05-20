@@ -1,9 +1,7 @@
 
-BasicGame.MainMenu = function (game) {
-	this.game = game;
-};
+BoardGame.MainMenu = function (game) {};
 
-BasicGame.MainMenu.prototype = {
+BoardGame.MainMenu.prototype = {
 	playloop: function(sound1, sound2) {
 		if (this.bgm_start) {
 
@@ -104,7 +102,7 @@ BasicGame.MainMenu.prototype = {
 		this.vol_slider.fixedToCamera = true;
 		this.vol_slider.cameraOffset.set(game.scale.width / 2, 100);
 
-	    game.input.addMoveCallback(function(ptr, x, y, down) {
+	    /*game.input.addMoveCallback(function(ptr, x, y, down) {
 	    	if (this.vol_slider.moving == true) {
 
 				var offsetMinMax = game.scale.width / 5;
@@ -119,19 +117,12 @@ BasicGame.MainMenu.prototype = {
 	    	}
 	    	this.vol_slider.prevX = this.vol_slider.cameraOffset.x;
 	    }, this);
+	    */
 
 	    //game.camera.follow(this.vol_slider);
 		
 
-		this.button = game.add.button(game.scale.width / 2, game.scale.height - 100, 'hisui-idle', function(){
-			$.post({
-				url: window.location+'/roll',
-				context: this,
-				success: function(data) {
-					this.randNumb = data;
-		    	}
-			});
-		}, this, 2, 3, 4, 5)
+		this.button = game.add.button(game.scale.width / 2, game.scale.height - 100, 'hisui-idle', this.post_roll, this, 2, 3, 4, 5)
 
 		//Let the server know we've joined the game.
 		//$.post({ url: window.location+'/enter' });
@@ -143,21 +134,21 @@ BasicGame.MainMenu.prototype = {
 			'down': Phaser.Keyboard.DOWN,
 			'left': Phaser.Keyboard.LEFT,
 			'right': Phaser.Keyboard.RIGHT,
-			'enter': Phaser.KeyCode.ENTER, 
-			'backspace': Phaser.KeyCode.BACKSPACE
+			//'enter': Phaser.KeyCode.ENTER, 
+			//'backspace': Phaser.KeyCode.BACKSPACE
 		});
 
 		this.chatString = "";
 		this.chatResponse = ["Welcome to the chat!"];
 
 		game.input.keyboard.onPressCallback = this.chat_key;
-		this.inputKeys.enter.onDown.add(this.chat_enter, this);
-		this.inputKeys.backspace.onDown.add(this.chat_backspace, this);
-		game.input.keyboard.addKeyCapture([Phaser.KeyCode.BACKSPACE, Phaser.KeyCode.ENTER])
+		//this.inputKeys.enter.onDown.add(this.post_chat, this);
+		//this.inputKeys.backspace.onDown.add(this.chat_backspace, this);
+		//game.input.keyboard.addKeyCapture([Phaser.KeyCode.BACKSPACE, Phaser.KeyCode.ENTER])
 
 	    //  Create our Timer
 	    this.timers = {
-	    	chat_ajax: game.time.create(false).loop(2000, this.chat_update, this).timer
+	    	chat_ajax: game.time.create(false).loop(2000, this.get_chat, this).timer
 	    } 
 	    this.timers.chat_ajax.start();
 
@@ -177,7 +168,7 @@ BasicGame.MainMenu.prototype = {
 		}
 	},
 
-	chat_enter: function() {
+	post_chat: function() {
 		if (this.chatString.length > 0) {
 			var msg = this.chatString;
 			this.chatString = "";
@@ -194,11 +185,40 @@ BasicGame.MainMenu.prototype = {
 					}
 		    	}
 			});
-			this.chat_update();
+			this.get_chat();
 		}
 	},
 
-	chat_update: function() {
+	post_join: function() {
+		$.post({
+			url: window.location+'/join',
+			data: {stage : 1},
+			context: this,
+			success: function(data) {}
+		});
+	},
+
+	post_character: function() {
+		$.post({
+			url: window.location+'/character',
+			context: this,
+			success: function(data) {
+				this.randNumb = data;
+	    	}
+		});
+	},
+
+	post_roll: function() {
+		$.post({
+			url: window.location+'/roll',
+			context: this,
+			success: function(data) {
+				this.randNumb = data;
+	    	}
+		});
+	},
+
+	get_chat: function() {
 		$.get({
 			url: window.location+'/chat',
 			data: {latest_chat : this.latest_chat},
@@ -242,9 +262,12 @@ BasicGame.MainMenu.prototype = {
 
 	update: function () {
 		game.input.enabled = game.input.activePointer.withinGame;
-		//if (typeof this.bgm_start !== undefined) {
-		//	this.bgm_start.volume = vol;
-		//}
+		if (game.sound.music_vol !== undefined) {
+			if (this.bgm_start !== undefined)
+				this.bgm_start.volume = game.sound.music_vol;
+			if (this.bgm_loop !== undefined)
+				this.bgm_loop.volume = game.sound.music_vol;
+		}
 	},
 	
 	render: function () {

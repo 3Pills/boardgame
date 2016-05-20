@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use Hash;
 use Auth;
+use Lang;
 use App\User;
 use Validator;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRegister;
+use App\Http\Requests\CreateUserLogin;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
 use Illuminate\Foundation\Auth\AuthenticatesAndRegistersUsers;
 
@@ -31,6 +33,13 @@ class AuthController extends Controller {
      * @var string
      */
     protected $redirectTo = '/game';
+
+    /**
+     * Where to redirect users who fail to login.
+     *
+     * @var string
+     */
+    protected $loginPath = '/login';
 
     /**
      * Create a new authentication controller instance.
@@ -68,16 +77,29 @@ class AuthController extends Controller {
     }
 
     /**
-     * Create a new user instance after a valid registration.
+     * Handle a login request for the application.
      *
-     * @param  array  $data
-     * @return User
-    protected function store(array $data) {
-        return User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => bcrypt($data['password']),
-        ]);
-    }
+     * @param  \Illuminate\Http\CreateUserLogin  $request
+     * @return \Illuminate\Http\Response
      */
+    public function postLogin(CreateUserLogin $request) {
+       
+        return $this->login($request);
+    }
+
+
+    /**
+     * Get the failed login response instance.
+     *
+     * @param \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    protected function sendFailedLoginResponse(CreateUserLogin $request)
+    {
+        return redirect($this->loginPath)
+            ->withInput($request->only($this->loginUsername(), 'remember'))
+            ->withErrors([
+                $this->loginUsername() => $this->getFailedLoginMessage(),
+            ]);
+    }
 }

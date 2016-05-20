@@ -1,14 +1,12 @@
 
-BasicGame.Preloader = function (game) {
-
+MapEditor.Preloader = function (game) {
 	this.background = null;
 	this.preloadBar = null;
 
 	this.ready = false;
-
 };
 
-BasicGame.Preloader.prototype = {
+MapEditor.Preloader.prototype = {
 
 	preload: function () {
 

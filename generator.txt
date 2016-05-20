@@ -1,0 +1,19 @@
+http://www.json-generator.com/
+{
+  data: {
+    name: 'Downtown',
+    id: 1
+  },
+  spaces: [
+    '{{repeat(30)}}',
+    {
+      type: 0,
+      pos: {
+        x: '{{index()%10}}', 
+        y: '{{Math.floor(index()/10)}}'
+      },
+      prev: '{{index()-1}}',
+      next: '{{index()+1}}'
+    }
+  ]
+}

@@ -34,8 +34,7 @@ class CreateUserRegister extends Request {
      */
     public function messages() {
         return [
-            'password.regex' => 'Password cannot contain special characters, except for the following: `~!@#$%^&*_-+=',
-            //'password_confirmation.confirmed' => 'The passwords do not match.'
+            'password.regex' => 'Password cannot contain special characters, except for the following: `~!@#$%^&*_-+='
         ];
     }
 }

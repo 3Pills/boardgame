@@ -21,11 +21,6 @@ class CreateGamesTable extends Migration {
             $table->integer('player_id3')->unsigned()->nullable();
             $table->integer('player_id4')->unsigned()->nullable();
 
-            $table->foreign('player_id1')->references('id')->on('players')->onDelete('set NULL');
-            $table->foreign('player_id2')->references('id')->on('players')->onDelete('set NULL');
-            $table->foreign('player_id3')->references('id')->on('players')->onDelete('set NULL');
-            $table->foreign('player_id4')->references('id')->on('players')->onDelete('set NULL');
-
             $table->boolean('private')->default(false);
             $table->timestamp('created_at');
         });

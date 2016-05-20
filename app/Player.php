@@ -17,8 +17,8 @@ class Player extends Model {
      *
      * @var array
      */
-    protected $fillable = [
-        'name', 'email', 'password', 'biography', 'image',
+    protected $fillable = [ 
+        'game_id', 'user_id'
     ];
 
 
@@ -28,7 +28,6 @@ class Player extends Model {
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
     ];
 
     /**
@@ -37,7 +36,7 @@ class Player extends Model {
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function game() {
-        return $this->belongsTo('App\Game')
+        return $this->belongsTo('App\Game');
     }
 
     /**
@@ -46,6 +45,6 @@ class Player extends Model {
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     public function user() {
-        return $this->belongsTo('App\User')
+        return $this->belongsTo('App\User');
     }
 }

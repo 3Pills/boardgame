@@ -149,7 +149,6 @@ return [
         Illuminate\View\ViewServiceProvider::class,
 
         Intervention\Image\ImageServiceProvider::class,
-        Vinkla\Pusher\PusherServiceProvider::class,
         
         /*
          * Application Service Providers...

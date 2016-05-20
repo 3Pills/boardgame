@@ -1,19 +1,18 @@
-var BasicGame = {};
+var MapEditor = {};
 
-BasicGame.Boot = function (game) {
+MapEditor.Boot = function (game) {
 
 };
 
-BasicGame.Boot.prototype = {
+MapEditor.Boot.prototype = {
 
     init: function () {
         this.input.maxPointers = 1;
         this.stage.disableVisibilityChange = true;
         this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
 
-        game.state.add('Preloader', BasicGame.Preloader);
-        game.state.add('MainMenu', BasicGame.MainMenu);
-        game.state.add('Game', BasicGame.Game);
+        game.state.add('Preloader', MapEditor.Preloader);
+        game.state.add('Main', MapEditor.Main);
 
         game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
     },

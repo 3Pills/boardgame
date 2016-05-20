@@ -12,16 +12,6 @@ use App\GameMessage;
 use Carbon\Carbon;
 
 class GamesController extends Controller {
-
-    /**
-     * Create a new user controller instance.
-     *
-     * @return void
-     */
-    public function __construct() {
-        $this->middleware('auth');
-    }    
-
     /**
      * Determine if the user is authorized to make this request.
      *
@@ -60,7 +50,31 @@ class GamesController extends Controller {
     }
 
     /**
-     * Handle Roll Request.
+     * Handle Join Data.
+     *
+     * @return Response
+     */
+    public function postJoin(Request $request, $url) {
+        $game = Game::where('url', '=', $url)->first();
+
+        //Get the stage of joining the user is in.
+        $stage = $request->input('stage');
+
+        //Final response is true if they are a player, false if a spectator.
+        return false;
+    }
+
+    /**
+     * Handle Join Data.
+     *
+     * @return Response
+     */
+    public function postQuit(Request $request, $url) {
+        $game = Game::where('url', '=', $url)->first();
+    }
+
+    /**
+     * Handle Roll Data.
      *
      * @return Response
      */

@@ -6,6 +6,13 @@ use App\Http\Requests\Request;
 
 class CreateUserLogin extends Request {
     /**
+     * The URI to redirect to if validation fails.
+     *
+     * @var string
+     */
+    protected $redirect = '/login';
+
+    /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
@@ -20,22 +27,9 @@ class CreateUserLogin extends Request {
      * @return array
      */
     public function rules() {
-        $user = User::find($this->users);
-        
         return [
-            'email' => 'required|email|unique:users,email',
+            'email' => 'required|email',
             'password' => 'required|between:8,30',
         ];
     }
-
-    /**
-     * Apply custom error messages to appropriate errors.
-     *
-     * @return array
-    public function messages() {
-        return [
-            'password.regex' => 'Password cannot contain special characters, except for the following [!@#$%&*_ ]',
-        ];
-    }
-     */
 }

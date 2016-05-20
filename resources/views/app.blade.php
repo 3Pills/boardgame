@@ -67,6 +67,12 @@
     </section>
     @yield('post-content')
 
+    <!--
+    <footer class="footer">
+
+    </footer>
+    -->
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
     <script type="text/javascript">
         $.ajaxSetup({
@@ -78,9 +84,5 @@
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6/js/bootstrap.min.js"></script>
     @yield('scripts-deferred')
-
-    <footer class="footer">
-
-    </footer>
 </body>
 </html>
