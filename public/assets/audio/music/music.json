@@ -1,0 +1,42 @@
+[
+  {
+    "name": "100% Orange Juice",
+	"dir": "oj",
+    "start": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "name": "Little Busters!",
+	"dir": "lb",
+    "start": [
+      false,
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "name": "Melty Blood",
+	"dir": "mb",
+    "start": [
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  {
+    "name": "Knuckles Chaotix",
+	"dir": "kc",
+    "start": [
+      true,
+      true,
+      true,
+      true
+    ]
+  }
+]

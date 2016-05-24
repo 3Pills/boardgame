@@ -87,7 +87,7 @@ BoardGame.MainMenu.prototype = {
 		this.sprite.inputEnabled = true;
 		this.sprite.input.useHandCursor = true;
 		this.sprite.events.onInputDown.add(this.cycleSpriteColor, this, 0, this.sprite, true);
-
+/*
 		this.vol_slider = game.add.sprite(40,40,'slider_tab');
 		this.vol_slider.inputEnabled = true;
 		this.vol_slider.input.useHandCursor = true;
@@ -102,7 +102,7 @@ BoardGame.MainMenu.prototype = {
 		this.vol_slider.fixedToCamera = true;
 		this.vol_slider.cameraOffset.set(game.scale.width / 2, 100);
 
-	    /*game.input.addMoveCallback(function(ptr, x, y, down) {
+	    game.input.addMoveCallback(function(ptr, x, y, down) {
 	    	if (this.vol_slider.moving == true) {
 
 				var offsetMinMax = game.scale.width / 5;
@@ -271,6 +271,7 @@ BoardGame.MainMenu.prototype = {
 	},
 	
 	render: function () {
+		/*
         game.debug.start(32, 20);
 
         game.debug.line('fps: '+game.time.fps)
@@ -294,12 +295,13 @@ BoardGame.MainMenu.prototype = {
 
         game.debug.stop();
 
-	    //game.debug.cameraInfo(game.camera, 32, 32);
-	    //game.debug.soundInfo(this.bgm_loop, 32, 180);
-	    //game.debug.spriteInfo(this.sprite, 32, 350);
-	    //game.debug.spriteCoords(this.vol_slider, 32, 500);
-//
-	    //game.debug.text(, 32, 20);
+	    game.debug.cameraInfo(game.camera, 32, 32);
+	    game.debug.soundInfo(this.bgm_loop, 32, 180);
+	    game.debug.spriteInfo(this.sprite, 32, 350);
+	    game.debug.spriteCoords(this.vol_slider, 32, 500);
+
+	    game.debug.text(, 32, 20);
+	    */
 	},
 
 	resize: function (width, height) {

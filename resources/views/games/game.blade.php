@@ -28,7 +28,7 @@
 				</div>
 				<button data-toggle="collapse" data-target="#options" style="width:100%;z-index:2;position:relative;">Chat <span class="caret"></span></button>
 			</div>
-			
+
 			<button data-toggle="collapse" data-target="#chat" style="max-width:1024px;width:60%;position:absolute;margin:0px 20%;">Chat <span class="caret"></span></button>
 			<div id="chat" class="chat collapse">
 				<div class="chat-window"></div>
@@ -36,7 +36,7 @@
 					<div class="text-console">Welcome to the Chat!</div>
 				</div>
 				<div id="chat-text" class="chat-text">
-					Chat: <input type="text" name="chat-input" id="chat-input" class="chat-input" onkeyup="postChat()" >
+					<div style="width:7%; display:inline-block;">Chat:</div><input type="text" name="chat-input" id="chat-input" class="chat-input" style="width:93%"/>
 				</div>
 				<button data-toggle="collapse" data-target="#chat" style="width:100%;z-index:2;position:relative;">Chat <span class="caret"></span></button>
 			</div>
@@ -60,6 +60,13 @@
 		var game = new Phaser.Game(1024, 576, Phaser.AUTO, 'gameContainer', BoardGame.Boot, false, false);
 		game.state.add('Boot', BoardGame.Boot);
 		game.state.start('Boot');
+
+    	game.sound.sound_vol = 0.5;
+    	game.sound.music_vol = 0.5;
+
+		function changeVolSound(value) { game.sound.sound_vol = value / 100; }
+		function changeVolMusic(value) { game.sound.music_vol = value / 100; }
+
 		window.onbeforeunload = function () {
 			//return "You are about to navigate away from the game window."
 		}
@@ -72,25 +79,19 @@
     <script>
     	var latest_chat = moment.utc(0).format();
 
-    	game.sound.sound_vol = 0.5;
-    	game.sound.music_vol = 0.5;
-
     	$(document).ready(function() {
-		    $('.chat-input').keyup(function(event) {
-		        if (event.keyCode == 13) {
-		        	postChat();
-		            return false;
-		         }
-		    });
+			$('.chat-input').keyup(function(e){
+			    if(e.keyCode === 13) {
+			    	postChat();
+			        return false;
+			    }
+			});
 		});
 
 		function pullData() {
 		    retrieveChatMessages();
 		    setTimeout(pullData,7000);
 		}
-
-		function changeVolSound(value) { game.sound.sound_vol = value / 100; }
-		function changeVolMusic(value) { game.sound.music_vol = value / 100; }
 
 		function loadChatData(msgData) {
 			for (var k in msgData) {
