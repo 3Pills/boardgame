@@ -14,7 +14,7 @@ class CreateSessionsTable extends Migration
         Schema::create('sessions', function (Blueprint $table) {
             $table->string('id')->unique();
             $table->integer('user_id')->unsigned()->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set NULL');
+            //$table->foreign('user_id')->references('id')->on('users')->onDelete('set NULL');
             $table->string('ip_address', 45)->nullable();
             $table->text('user_agent')->nullable();
             $table->text('payload');

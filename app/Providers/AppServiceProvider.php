@@ -20,7 +20,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        $pusher = $this->app->make('pusher');
+        $pusher->set_logger( new LaravelLoggerProxy() );
     }
 
     /**

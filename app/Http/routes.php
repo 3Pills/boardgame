@@ -22,7 +22,12 @@ Route::group(['middleware' => ['web']], function() {
     Route::get('register/', 'AuthController@getRegister');
     Route::post('register/', 'AuthController@register');
 
-    Route::group(['prefix' => 'user/'], function() {
+    Route::get('verify/{code}', 'EmailController@verify');
+    Route::get('send_verify/', 'EmailController@postEmail');
+    
+    Route::get('password_reset/{code}', 'PasswordController@reset');
+
+    Route::group(['prefix' => 'user/', 'as' => 'user::'], function() {
         Route::get('/', 'UserController@index');
         Route::get('{url}/', 'UserController@show');
         Route::delete('{url}/', 'UserController@delete');
@@ -30,7 +35,7 @@ Route::group(['middleware' => ['web']], function() {
         Route::post('{url}/settings', 'UserController@update');
     });
 
-    Route::group(['prefix' => 'game/', 'middleware' => 'auth'], function() {
+    Route::group(['prefix' => 'game/', 'middleware' => 'auth', 'as' => 'game::'], function() {
         Route::get('/', 'GamesController@index');
         Route::post('/', 'GamesController@create');
 
@@ -50,12 +55,29 @@ Route::group(['middleware' => ['web']], function() {
 
             Route::get('roll/', 'GamesController@getRoll');
             Route::post('roll/', 'GamesController@postRoll');
+
+            Route::get('playerLoaded/', 'GamesController@getPlayerLoaded');
+            Route::post('playerLoaded/', 'GamesController@postPlayerLoaded');
         });
     });
 
-    //Route::get('/admin/users', 'AdminController@viewall');
+    Route::group(['prefix' => 'admin/', 'middleware' => 'auth', 'as' => 'admin::'], function() {
+        Route::get('/', 'AdminController@index');
+    });
+
+    Route::get('/bridge', function() {
+        $pusher = App::make('pusher');
+
+        $pusher->trigger( 'test-channel',
+                          'test-event', 
+                          array('text' => 'Preparing the Pusher Laracon.eu workshop!'));
+
+        return view('welcome');
+    });
 
     /*
+    Route::get('/admin/users', 'AdminController@viewall');
+
     Route::get('sendMessage', 'ChatController@sendMessage');
     Route::get('isTyping','ChatController@isTyping');
     Route::get('notTyping', 'ChatController@notTyping');
@@ -67,18 +89,18 @@ Route::group(['middleware' => ['web']], function() {
     Route::post('notTyping', 'ChatController@notTyping');
     Route::post('retrieveChatMessages', 'ChatController@retrieveChatMessages');
     Route::post('retrieveTypingStatus', 'ChatController@retrieveTypingStatus');
-    */
 
     Route::get('/{username}', function($username) {
         return View::make('chats')->with('username',$username);
     });
 
-    //Route::get('/123', ['middleware' => 'auth', function() {
-    //	return "123";
-    //}]);
+    Route::get('/123', ['middleware' => 'auth', function() {
+    	return "123";
+    }]);
 
-    //Route::controllers([
-    //	'auth' => 'AuthController',
-    //	'password' => 'PasswordController'
-    //]);
+    Route::controllers([
+    	'auth' => 'AuthController',
+    	'password' => 'PasswordController'
+    ]);
+    */
 });

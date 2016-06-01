@@ -15,6 +15,9 @@ class CreatePlayersTable extends Migration {
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->integer('game_id')->unsigned();
             $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
+            $table->integer('join_stage')->default(0)->unsigned()->index();
+            $table->integer('character')->default(0)->unsigned();
+            $table->integer('palette')->default(0)->unsigned();
             $table->timestamps();
         });
     }

@@ -18,7 +18,6 @@ class CreateGameMessagesTable extends Migration {
             $table->foreign('game_id')->references('id')->on('games')->onDelete('set NULL');
 
             $table->timestamp('created_at');
-            
             $table->text('msg');
         });
     }

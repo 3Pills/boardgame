@@ -1,0 +1,10 @@
+{
+  "name": "Knuckles Chaotix",
+  "dir": "kc",
+  "start": [
+    true,
+    true,
+    true,
+    true
+  ]
+}

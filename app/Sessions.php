@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Database\Eloquent\Builder;
 use Cartalyst\Sentinel\Laravel\Facades\Sentinel;
 
-class Session extends Model {
+class Sessions extends Model {
     public $table = 'sessions';
     public $timestamps = false;
 

@@ -26,7 +26,7 @@
                 <li class="nav-item"><a href="{{ url('/user') }}">Users</a></li>
             </ul>
             <ul class="nav navbar-nav navbar-right">
-                @if(\Auth::user())
+                @if(\Auth::check())
                     <li role="presentation" class="dropdown">
                         <a id="profile-link" type="button" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="{{ \URL::to('/user/'.\Auth::user()->url) }}">
                             <span class="navbar-username">{{\Auth::user()->name}}</span>
@@ -63,6 +63,12 @@
     </header>
 
     <section class="container">
+        @if(\Auth::check() && \Auth::user()->role == 0) 
+            <div class="alert alert-warning">
+              <strong>Alert!</strong> Your email has yet to be validated. You will not be able to create game lobbies or chat. Click <a>here</a> to resend verification email.
+            </div>
+        @endif
+
         @yield('content')
     </section>
     @yield('post-content')
@@ -71,9 +77,20 @@
     <footer class="footer">
 
     </footer>
-    -->
 
+    <script src="http://js.pusher.com/3.0/pusher.min.js"></script>
+    <script>
+        var pusher = new Pusher("{{env("PUSHER_KEY")}}")
+        var channel = pusher.subscribe('test-channel');
+        channel.bind('test-event', function(data) {
+          alert(data.text);
+        });
+    </script>
+    -->
+    
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.2/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <script type="text/javascript">
         $.ajaxSetup({
             headers: {

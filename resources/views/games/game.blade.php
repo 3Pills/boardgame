@@ -19,7 +19,7 @@
 	<div class="container-game">
 
 		<div class="game-overlay" >
-			<button data-toggle="collapse" data-target="#options" style="max-width:1024px;width:10%;position:absolute;margin:0px 90%;">Options <span class="caret"></span></button>
+			<button data-toggle="collapse" data-target="#options" class="options-button">Options <span class="caret"></span></button>
 			<div id="options" class="options collapse">
 				<div class="options-window"></div>
 				<div class="chat-text">
@@ -29,7 +29,7 @@
 				<button data-toggle="collapse" data-target="#options" style="width:100%;z-index:2;position:relative;">Chat <span class="caret"></span></button>
 			</div>
 
-			<button data-toggle="collapse" data-target="#chat" style="max-width:1024px;width:60%;position:absolute;margin:0px 20%;">Chat <span class="caret"></span></button>
+			<button data-toggle="collapse" data-target="#chat" class="chat-button">Chat <span class="caret"></span></button>
 			<div id="chat" class="chat collapse">
 				<div class="chat-window"></div>
 				<div id="chat-text" class="chat-text">
@@ -53,7 +53,10 @@
     <script src="{{ url('/assets/js/game/Boot.js') }}"></script>	
     <script src="{{ url('/assets/js/game/Preloader.js') }}"></script>
     <script src="{{ url('/assets/js/game/MainMenu.js') }}"></script>
+    <script src="{{ url('/assets/js/game/GameLoader.js') }}"></script>
     <script src="{{ url('/assets/js/game/Game.js') }}"></script>
+    <script src="{{ url('/assets/js/game/GameFinish.js') }}"></script>
+    <script src="{{ url('/assets/js/phaser-plugin-isometric.js') }}"></script>
 
 	<script type="text/javascript">
 		//Canvas is used cause FireFox doesn't handle WebGL Sprites very well...
@@ -61,8 +64,7 @@
 		game.state.add('Boot', BoardGame.Boot);
 		game.state.start('Boot');
 
-    	game.sound.sound_vol = 0.5;
-    	game.sound.music_vol = 0.5;
+        var music_url = base_url + 'assets/audio/music/' + 'lb/';
 
 		function changeVolSound(value) { game.sound.sound_vol = value / 100; }
 		function changeVolMusic(value) { game.sound.music_vol = value / 100; }
@@ -86,6 +88,9 @@
 			        return false;
 			    }
 			});
+
+	        $("#music-range").val(10);
+	        $("#sound-range").val(50);
 		});
 
 		function pullData() {

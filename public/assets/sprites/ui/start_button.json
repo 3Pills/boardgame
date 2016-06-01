@@ -1,0 +1,28 @@
+{
+"frames": [
+	{
+		"filename": "frame_0000.png",
+		"frame": {"x":0, "y":104, "w":144, "h":51},
+		"spriteSourceSize": {"x":0,"y":0,"w":144,"h":51},
+		"sourceSize": {"w":144,"h":51}
+	},
+	{
+		"filename": "frame_0001.png",
+		"frame": {"x":0, "y":52, "w":144, "h":51},
+		"spriteSourceSize": {"x":0,"y":0,"w":144,"h":51},
+		"sourceSize": {"w":144,"h":51}
+	},
+	{
+		"filename": "frame_0002.png",
+		"frame": {"x":0, "y":0, "w":144, "h":51},
+		"spriteSourceSize": {"x":0,"y":0,"w":144,"h":51},
+		"sourceSize": {"w":144,"h":51}
+	}
+
+],
+"meta": {
+	"image": "start_button.png",
+	"size": {"w": 145, "h": 156},
+	"scale": "1"
+}
+}

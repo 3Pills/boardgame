@@ -2,15 +2,18 @@ h1, h2, h3, h4, h5, h6 {
   margin: 10px 0px; }
 
 .panel {
-  margin: 0px;
-  padding: 0px; }
+  margin-bottom: 0px; }
 
 .panel-body {
   margin: 0px;
   padding: 4px; }
 
+.panel-tab {
+  border-radius: 0px;
+  border-top: 0px; }
+
 .container {
-  max-width: 1000px !important; }
+  max-width: 1100px !important; }
 
 .container-game {
   width: 100%;
@@ -114,11 +117,28 @@ h1, h2, h3, h4, h5, h6 {
   opacity: 0.4;
   filter: alpha(opacity=40); }
 
+.shoutbox {
+  width: 100%;
+  margin: 0px; }
+
+.options-button {
+  width: 10%;
+  max-width: 1024px !important;
+  position: absolute;
+  margin: 0px 90%; }
+
 .chat {
   width: 60%;
   position: absolute;
   max-width: 1024px !important;
   margin: 0px 20%; }
+
+.chat-button {
+  width: 60%;
+  max-width: 1024px !important;
+  position: absolute;
+  margin: 0px 20%;
+  transition: 3s linear; }
 
 .chat-window {
   width: 100%;

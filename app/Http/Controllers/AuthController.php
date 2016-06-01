@@ -8,6 +8,7 @@ use Lang;
 use App\User;
 use Validator;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Request;
 use App\Http\Requests\CreateUserRegister;
 use App\Http\Requests\CreateUserLogin;
 use Illuminate\Foundation\Auth\ThrottlesLogins;
@@ -83,7 +84,6 @@ class AuthController extends Controller {
      * @return \Illuminate\Http\Response
      */
     public function postLogin(CreateUserLogin $request) {
-       
         return $this->login($request);
     }
 
@@ -94,8 +94,7 @@ class AuthController extends Controller {
      * @param \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    protected function sendFailedLoginResponse(CreateUserLogin $request)
-    {
+    protected function sendFailedLoginResponse(CreateUserLogin $request) {
         return redirect($this->loginPath)
             ->withInput($request->only($this->loginUsername(), 'remember'))
             ->withErrors([

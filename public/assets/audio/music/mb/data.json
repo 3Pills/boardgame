@@ -1,0 +1,10 @@
+{
+  "name": "Melty Blood",
+  "dir": "mb",
+  "start": [
+    true,
+    true,
+    true,
+    true
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "name": "Little Busters!",
+  "dir": "lb",
+  "start": [
+    false,
+    true,
+    true,
+    true
+  ]
+}

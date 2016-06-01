@@ -65,6 +65,15 @@ class GamesController extends Controller {
     }
 
     /**
+     * Handle Player Loaded Data.
+     *
+     * @return Response
+     */
+    public function getJoin(Request $request, $url) {
+        return [['character' => 0, 'palette' => 0]];
+    }
+
+    /**
      * Handle Join Data.
      *
      * @return Response
@@ -80,6 +89,24 @@ class GamesController extends Controller {
      */
     public function postRoll(Request $request, $url) {
         return rand(1, 11);
+    }
+
+    /**
+     * Handle Player Loaded Data.
+     *
+     * @return Response
+     */
+    public function getPlayerLoaded(Request $request, $url) {
+        return [['character' => 0, 'palette' => 0]];
+    }
+
+    /**
+     * Handle Player Loaded Post.
+     *
+     * @return Response
+     */
+    public function postPlayerLoaded(Request $request, $url) {
+        return [];
     }
 
     /**
