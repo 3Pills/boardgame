@@ -47,9 +47,12 @@ Route::group(['middleware' => ['web']], function() {
 
             Route::get('pList/', 'GamesController@getPlayerList');
             Route::get('pData/', 'GamesController@getPlayerData');
+            Route::get('tData/', 'GamesController@getTurnData');
 
+            Route::get('join/', 'GamesController@postJoin');
             Route::post('join/', 'GamesController@postJoin');
             Route::post('ready/', 'GamesController@postReady');
+            Route::get('loaded/', 'GamesController@postLoaded');
             Route::post('loaded/', 'GamesController@postLoaded');
 
             Route::post('ping/', 'GamesController@postPing');
@@ -57,7 +60,7 @@ Route::group(['middleware' => ['web']], function() {
             Route::get('chat/', 'GamesController@getChat');
             Route::post('chat/', 'GamesController@postChat');
 
-            Route::get('roll/', 'GamesController@getRoll');
+            Route::get('roll/', 'GamesController@postRoll');
             Route::post('roll/', 'GamesController@postRoll');
         });
     });

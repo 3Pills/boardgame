@@ -31,10 +31,6 @@ CREATE TABLE IF NOT EXISTS `games` (
   `name` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `url` varchar(255) COLLATE utf8_unicode_ci NOT NULL,
   `map` tinyint(3) unsigned NOT NULL,
-  `player_id1` int(10) unsigned DEFAULT NULL,
-  `player_id2` int(10) unsigned DEFAULT NULL,
-  `player_id3` int(10) unsigned DEFAULT NULL,
-  `player_id4` int(10) unsigned DEFAULT NULL,
   `private` tinyint(1) NOT NULL DEFAULT '0',
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci AUTO_INCREMENT=2 ;
@@ -43,8 +39,8 @@ CREATE TABLE IF NOT EXISTS `games` (
 -- Dumping data for table `games`
 --
 
-INSERT INTO `games` (`id`, `name`, `url`, `map`, `player_id1`, `player_id2`, `player_id3`, `player_id4`, `private`, `created_at`) VALUES
-(1, 'Just the Tip ', 'qK44p', 0, NULL, NULL, NULL, NULL, 0, '2016-06-09 03:01:23');
+INSERT INTO `games` (`id`, `name`, `url`, `map`, `private`, `created_at`) VALUES
+(1, 'Just the Tip ', 'qK44p', 0, 0, '2016-06-09 03:01:23');
 
 --
 -- Indexes for dumped tables
@@ -54,7 +50,7 @@ INSERT INTO `games` (`id`, `name`, `url`, `map`, `player_id1`, `player_id2`, `pl
 -- Indexes for table `games`
 --
 ALTER TABLE `games`
- ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `games_url_unique` (`url`), ADD KEY `games_player_id1_index` (`player_id1`), ADD KEY `games_player_id2_index` (`player_id2`), ADD KEY `games_player_id3_index` (`player_id3`), ADD KEY `games_player_id4_index` (`player_id4`), ADD KEY `games_private_index` (`private`);
+ ADD PRIMARY KEY (`id`), ADD UNIQUE KEY `games_url_unique` (`url`), ADD KEY `games_private_index` (`private`);
 
 --
 -- AUTO_INCREMENT for dumped tables

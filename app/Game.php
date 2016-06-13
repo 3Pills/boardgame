@@ -37,7 +37,7 @@ class Game extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'url', 'map', 'private',
+        'name', 'url', 'map', 'private', 'state'
     ];
 
     /**

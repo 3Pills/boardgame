@@ -14,6 +14,10 @@ class UserEventListener
         //
     }
 
+    public function userRegistered($event) {
+
+    }
+
     /**
      * Handle the event.
      *

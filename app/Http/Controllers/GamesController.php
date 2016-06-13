@@ -8,6 +8,7 @@ use App\Http\Requests;
 
 use App\User;
 use App\Game;
+use App\GameTurns;
 use App\GameMessage;
 use App\Player;
 use Carbon\Carbon;
@@ -67,18 +68,16 @@ class GamesController extends Controller {
      * @return Response
      */
     public function getPlayerList(Request $request, $url) {
-        if (!$request->ajax()) { return redirect('/game/'.$url); }
+        //if (!$request->ajax()) { return redirect('/game/'.$url); }
         $game = Game::where('url', '=', $url);
         if ($game->count() > 0) {
             $game = $game->first();
-            $players = Player::recentlyCreated( Carbon::createFromTimeStampUTC( $request->input('ts') ), $game->id);
+            $players = Player::notPartOf( $request->input('uIDs') != null ? $request->input('uIDs') : [], $game->id);
             if ($players->count() > 0) {
-                $players = $players->get();
+                $players = $players->get()->sortBy('created_at')->values()->all();
                 foreach ($players as $key => $player) {
                     $player->user_data = User::where('id', '=', $player->user_id)->first();
                 }
-                $keyed = $players->keyBy('user_id');
-                $players = $keyed->all();
                 $time = Carbon::now()->timestamp;
                 return compact('players', 'time');
             }
@@ -97,18 +96,46 @@ class GamesController extends Controller {
         $game = Game::where('url', '=', $url);
         if ($game->count() > 0) {
             $game = $game->first();
-            $players = Player::recentlyUpdated( Carbon::createFromTimeStampUTC( $request->input('ts') ), $game->id);
+            $players = Player::where('game_id', '=', $game->id);
             if ($players->count() > 0) {
-                $players = $players->get();
-                foreach ($players as $key => $player) {
-                    $player->user_data = User::where('id', '=', $player->user_id)->first();
+                $players = $players->get()->keyBy('user_id')->all();
+                $keyData = $request->input('keyData') != null ? $request->input('keyData') : [];
+                //dd( [$players, $keyData] );
+                foreach ($keyData as $key => $value) {
+                    if ($players[$key] != null && $players[$key][$request->input('key')] == $value) {
+                        unset($keyData[$key]);
+                    }
+                    else {
+                        $keyData[$key] = $players[$key][$request->input('key')];
+                    }
                 }
-                $plucked = $players->pluck($request->input('key'), 'user_id');
-                $players = $plucked->all();
-                $time = Carbon::now()->timestamp;
-                return compact('players', 'time');
+                $players = $keyData;
+                return compact('players');
             }
             return [];
+        }
+        return;
+    }
+
+    /**
+     * Handle request for a list of Players only including a specific record from their data.
+     *
+     * @return Response
+     */
+    public function getTurnData(Request $request, $url) {
+        //if (!$request->ajax()) { return redirect('/game/'.$url); }
+        $game = Game::where('url', '=', $url);
+        if ($game->count() > 0) {
+            $game = $game->first();
+            $turns = GameTurns::where('id', '>', $request->input('tID') != null ? $request->input('tID') : 0);
+            if ($turns->count() > 0) {
+                $turns = $turns->get();
+                foreach ($turns as $key => $turn) {
+                    $turn->data = json_decode($turn->data);
+                }
+                return compact('turns');
+            }
+            return;
         }
         return;
     }
@@ -120,8 +147,13 @@ class GamesController extends Controller {
      */
     public function postJoin(Request $request, $url) {
         $players = Player::where('user_id', '=', $request->user()->id);
-        if ($players->count() > 0) 
-            return;
+        if ($players->count() > 0) {
+            $player = $players->first();
+            $player->character = $request->input('character');
+            $player->palette = $request->input('palette');
+            $player->save();
+            return ['status' => 2];
+        }
         $game = Game::where('url', '=', $url);
         if ($game->count() > 0) {
             $game = $game->first();
@@ -132,9 +164,9 @@ class GamesController extends Controller {
                     'character' => $request->input('character'), 
                     'palette' => $request->input('palette'),
                 ]);
-                return true;
+                return ['status' => 1];
             }
-            return false;
+            return ['status' => 3];
         }
     }
 
@@ -147,7 +179,7 @@ class GamesController extends Controller {
         $game = Game::where('url', '=', $url);
         if ($game->count() > 0) {
             $game = $game->first();
-            $players = Player::inGameState($request->user()->id, $game->id, $stage)->get();
+            $players = Player::inGameState($request->user()->id, $game->id, $stage)->sortBy('created_at')->get();
             foreach ($players as $key => $player) {
                 $player->user_data = User::where('id', '=', $player->user_id)->first();
             }
@@ -170,9 +202,11 @@ class GamesController extends Controller {
                 $player = $player->first();
                 $player->state = $stage;
                 $player->save();
+                return ['status' => 1];
             }
+            return ['status' => 2];
         }
-        return;
+        return ['status' => 3];
     }
 
     /**
@@ -190,7 +224,15 @@ class GamesController extends Controller {
      * @return Response
      */
     public function postReady(Request $request, $url) {
-        $this->setPlayersStage($request, $url, 1);
+        $returnData = $this->setPlayersStage($request, $url, 1);
+        if ($returnData['status'] != 3) {
+            $game = Game::where('url', '=', $url)->first();
+            if ( Player::where('game_id', '=', $game->id)->where('state', '!=', '1')->count() == 0 ) {
+                $game->state = 1;
+                $game->save();
+            }
+        }
+        return $returnData;
     }
 
     /**
@@ -208,7 +250,15 @@ class GamesController extends Controller {
      * @return Response
      */
     public function postLoaded(Request $request, $url) {
-        $this->setPlayersStage($request, $url, 2);
+        $returnData = $this->setPlayersStage($request, $url, 2);
+        if ($returnData['status'] != 3) {
+            $game = Game::where('url', '=', $url)->first();
+            if (Player::where('game_id', '=', $game->id)->where('state', '!=', '2')->count() == 0) {
+                $game->state = 2;
+                $game->save();
+            }
+        }
+        return $returnData;
     }
 
     /**
@@ -233,9 +283,18 @@ class GamesController extends Controller {
         if ($game->count() > 0) {
             $game = $game->first();
             $players = Player::where('user_id', '=', $request->user()->id)->where('game_id', '=', $game->id);
-            if ($players->count() == 0) return;
-            return ['roll' => rand(1, 12)];
+            if ($players->count() == 0) return false;
+            $lastTurn = GameTurns::orderBy('created_at', 'desc');
+            if ($lastTurn->count() > 0) {
+                $lastTurn = $lastTurn->first();
+                $lastTurn->data = json_decode($lastTurn->data);
+                if ($request->user()->id == $lastTurn->user_id && !$lastTurn->data->joinLast) return false;
+            }
+            $roll = rand(1, 12);
+            $turnData = GameTurns::create(['game_id' => $game->id, 'user_id' => $request->user()->id, 'data' => json_encode(['type' => 1, 'roll' => $roll]) ]);
+            return compact('roll');
         }
+        return false;
     }
 
     /**

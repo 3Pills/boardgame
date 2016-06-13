@@ -36,7 +36,7 @@ class GameTurns extends Model {
      * @var array
      */
     protected $fillable = [
-        'user_id', 'data',
+        'game_id', 'user_id', 'data',
     ];
 
 }

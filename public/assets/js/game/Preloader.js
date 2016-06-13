@@ -20,20 +20,24 @@ BoardGame.Preloader.prototype = {
 		this.loadingText = game.add.text(512, 550, "Loading UI Elements...", { font: "14px Arial", fill: "#ffffff", align: "center" });
 		this.loadingText.anchor.set(0.5, 1);
 
-		game.load.atlasJSONHash('start_button', base_url + 'assets/sprites/ui/start_button.png', base_url + 'assets/sprites/ui/start_button.json');
+		game.load.atlasJSONHash('start_button', '../assets/sprites/ui/start_button.png', '../assets/sprites/ui/start_button.json');
+		game.load.atlasJSONHash('join_button', '../assets/sprites/ui/join_button.png', '../assets/sprites/ui/join_button.json');
+		game.load.atlasJSONHash('ready_button', '../assets/sprites/ui/ready_button.png', '../assets/sprites/ui/ready_button.json');
 
 		this.loadingText.text = "Loading Character Data...";
 		var characterData = game.cache.getJSON('character_data');
 		for (var key = characterData.length; key--;) {
-			var dir = base_url + 'assets/sprites/' + characterData[key].dir + '/';
+			var dir = '../assets/sprites/' + characterData[key].dir + '/';
 			game.load.atlasJSONHash(key + '_idle', dir + 'idle.png', dir + 'idle.json');
-			game.load.json(key + '_atlas', dir + 'idle.json');
+			game.load.json(key + '_idle_atlas', dir + 'idle.json');
 			game.load.json(key + '_palettes', dir + 'palettes.json');
 		}
 
 		this.loadingText.text = "Loading Music...";
-		
+		 
+		 /*
 		var musicData = game.cache.getJSON('music_data');
+        var music_url = '../assets/audio/music/' + 'lb/';
 		for (var key = musicData.start.length; key--;) {
 			if (key <= 2) {
 				if (musicData.start[key] === true) {
@@ -44,15 +48,11 @@ BoardGame.Preloader.prototype = {
 				console.log('loaded \'' + music_url+key+'_loop.ogg\' to cache \'bgm'+key+'_loop\'');
 			}
 		}
-		//game.load.json('music-data', music_url +'/data.json');
-		//this.load.audio('bgm1_start', base_url + 'assets/audio/music/melty/actors_anteroom_start.ogg');
-		//this.load.audio('bgm1_loop', base_url + 'assets/audio/music/melty/actors_anteroom_loop.ogg');
-
-		//this.load.audio('bgm2_start', base_url + 'assets/audio/music/take_off_start.ogg');
-		//this.load.audio('bgm2_loop', base_url + 'assets/audio/music/take_off_loop.ogg');
+		*/
 	},
 
 	create: function () {
+		this.loadingText.text = "Initialising object properties...";
         game.players = [];
         game.sound.music = {'_volume': 0};
         game.sound.sound = {'list':[], '_volume': 0.5};
@@ -84,10 +84,52 @@ BoardGame.Preloader.prototype = {
 		    }
 		});
 
+		game.state.start('MainMenu');
+		this.loadingText.text = "Launching Game...";
 		game.time.events.add(Phaser.Timer.SECOND * 2, function() {
 			this.state.start('MainMenu');
 		}, this);
 	},
+
+	getGameState: function() {
+        $.get({
+            url: window.location+'/state',
+            context: this,
+            data: {ts: 0},
+            success: function(data) {
+            	switch(data.state) {
+            		case 0:
+            			game.state.start('MainMenu');
+            			break;
+            		case 1:
+            			this.getPlayerList(data.state);
+            			game.state.start('GameLoader', 1);
+            			break;
+            		case 2:
+            			this.getPlayerList(data.state);
+            			game.state.start('GameLoader', 2);
+            			break;
+            	}
+            }
+        });
+	},
+
+    getPlayerList: function(gameState) {
+        $.get({
+            url: window.location+'/pList',
+            context: this,
+            data: {ts: 0},
+            success: function(data) {
+                if (Object.keys(data).length > 0) {
+                    game.players = data.players;
+                	game.state.start('GameLoader', gameState);
+                }
+                else {
+            		game.state.start('MainMenu');
+                }
+            }
+        });
+    },
 
 	//Send a request to the server to see if the game is still in selection phase.
 	post_join: function() {
@@ -109,13 +151,12 @@ BoardGame.Preloader.prototype = {
 			},
 			success: function(data) {
 				if (data.slotAvailable == true) {
-					this.state.start('MainMenu');
+					game.state.start('MainMenu');
 				}
 				else {
-					this.state.start('Game');
+					game.state.start('Game');
 				}
 	    	},
 		});
 	},
-
 };

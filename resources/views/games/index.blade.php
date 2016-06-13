@@ -11,7 +11,8 @@
 		<div class="lobby-list" style="height:500px;">
 		@foreach (\App\Game::all()->sortBy('name') as $key=>$game)
 			<div class="lobby-card well">
-				<a href="{{'game/'.$game->url}}">				<div class="lobby-card-base" style="height:50px;">
+				<a href="{{'game/'.$game->url}}">
+				<div class="lobby-card-base" style="height:50px;">
 					<div class="col-sm-2">
 						<img src="{{ url('./assets/images/default-avatar.png') }}" alt="avatar" class="lobby-card-preview">
 					</div>

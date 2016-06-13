@@ -29,11 +29,12 @@ BoardGame.Boot.prototype = {
 
     preload: function () {
         //  Here we load the assets required for our preloader (in this case a background and a loading bar)
-        game.load.image('preloadBackground', base_url + 'assets/sprites/preload_bg.png');
-        game.load.image('preloadBar', base_url + 'assets/sprites/title_card.png');
+        game.load.image('preloadBackground', '../assets/sprites/preload_bg.png');
+        game.load.image('preloadBar', '../assets/sprites/title_card.png');
         
+        var music_url = '../assets/audio/music/' + 'lb/';
         game.load.json('music_data', music_url +'/data.json');
-        game.load.json('character_data', base_url + 'assets/sprites/characters.json');
+        game.load.json('character_data', '../assets/sprites/characters.json');
     },
 
     create: function () {

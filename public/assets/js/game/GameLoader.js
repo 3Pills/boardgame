@@ -27,13 +27,7 @@ BoardGame.GameLoader = function (game) {
 };
 
 BoardGame.GameLoader.prototype = {
-	init: function (bgm_start, bgm_loop) {
-		this.bgm_start = bgm_start;
-		this.bgm_loop = bgm_loop;
-	    this.latest = {
-	    	'pData': 0,
-	    };
-
+	init: function () {
 		this.preloadBar = game.add.sprite(game.world.centerX, game.world.centerY, 'preloadBar');
 		this.preloadBar.position.x = game.world.centerX - this.preloadBar.width / 2;
 		this.preloadBar.position.y = game.world.centerY - this.preloadBar.height;
@@ -46,43 +40,46 @@ BoardGame.GameLoader.prototype = {
 	preload: function () {
 
 		this.loadingText.text = "Loading Character Data...";
-		var count = 0;
 		var palettes = {};
 		for (var i = game.players.length - 1; i >= 0; i--) {
-			game.players[i].sprite = game.add.sprite(320 + 128 * count, 400, game.players[i].character + '_idle');
-			game.players[i].sprite.anchor.set(0.5, 1);
+			var ply = game.players[i];
+			ply.sprite = game.add.sprite(320 + 128 * i, 400, ply.character + '_idle');
+			ply.sprite.anchor.set(0.5, 1);
 			
-			game.players[i].sprite.animations.add(game.players[i].character + '_idle', null, 20, true);
-			game.players[i].sprite.animations.play(game.players[i].character + '_idle');
+			ply.sprite.animations.add(ply.character + '_idle', null, game.cache.getJSON(ply.character + '_idle_atlas').meta.fps, true);
+			ply.sprite.animations.play(ply.character + '_idle');
 
-			game.players[i].sprite.currCharacter = game.players[i].character;
-			game.players[i].sprite.currPalette = game.players[i].palette;
+			ply.sprite.currCharacter = ply.character;
+			ply.sprite.currPalette = ply.palette;
 
-			if (!palettes[game.players[i].character]) {
-				palettes[game.players[i].character] = {};
+			if (!palettes[ply.character]) {
+				palettes[ply.character] = {};
 			}
-			palettes[game.players[i].character][game.players[i].palette] = true;
+			palettes[ply.character][game.players[i].palette] = true;
 
-			game.players[i].sprite.paletteData = game.cache.getJSON(game.players[i].character + '_palettes');
-        	game.players[i].sprite.loadPalette(game.players[i].character, '_idle');
-        	count += 1;
+			ply.sprite.paletteData = game.cache.getJSON(game.players[i].character + '_palettes');
+        	ply.sprite.loadPalette(game.players[i].character, '_idle');
+
+        	game.load.image(ply.character + '_portrait', '../assets/sprites/portrait/'+ ply.character +'.png');
 		}
 
 		this.loadingText.text = "Loading UI Elements...";
-		game.load.atlasJSONHash('roll_button', base_url + 'assets/sprites/ui/roll_button.png', base_url + 'assets/sprites/ui/roll_button.json');
+		game.load.atlasJSONHash('roll_button', '../assets/sprites/ui/roll_button.png', '../assets/sprites/ui/roll_button.json');
+        
+        game.load.image('card_portrait', '../assets/sprites/portrait/card.png');
 
 		this.loadingText.text = "Loading Map Elements...";
 		this.loadingText.anchor.set(0.5, 1);
 
-        game.load.image('base_tile', base_url + 'assets/sprites/stage/tile_large.png');
-        game.load.image('point', base_url + 'assets/sprites/point.png');
+        game.load.image('base_tile', '../assets/sprites/stage/tile_large_3d.png');
+        game.load.image('point', '../assets/sprites/point.png');
         
-		game.load.json('map_data', base_url + 'assets/json/board1.json');
+		game.load.json('map_data', '../assets/json/board1.json');
 
 		this.loadingText.text = "Loading Character Data...";
 		var characterData = game.cache.getJSON('character_data');
 		for (var key = characterData.length; key--;) {
-			var dir = base_url + 'assets/sprites/' + characterData[key].dir + '/';
+			var dir = '../assets/sprites/' + characterData[key].dir + '/';
 
 			key
 
@@ -99,9 +96,9 @@ BoardGame.GameLoader.prototype = {
 	create: function () {
 		this.postLoaded();
 	    this.timers = {
-	    	pingPlayerStates: game.time.create(false).loop(1500, this.pingPlayerStates, this, 'state').timer
+	    	getPlayerData: game.time.create(false).loop(1500, this.getPlayerData, this, 'state').timer
 	    } 
-	    this.timers.pingPlayerStates.start();
+	    this.timers.getPlayerData.start();
 	},
 
 	update: function () {
@@ -127,23 +124,21 @@ BoardGame.GameLoader.prototype = {
 		});
 	},
 
-	pingPlayerStates: function(state) {
-		this.getPlayerData(state);
-	},
-
 	getPlayerData: function(key) {
+		var keyData = {};
+		for (var pID in game.players) {
+			keyData[game.players[pID].user_data.id] = game.players[pID][key];
+		}
 		$.get({
 			url: window.location+'/pData',
 			context: this,
-			data: {ts: this.latest.pData, key: key },
+			data: {key: key, keyData: keyData },
 			success: function(data) {
 				if (Object.keys(data).length > 0) {
-					this.latest.pData = data.time;
-
-					for (var userID in data.players) {
+					for (var uID in data.players) {
 						for (var i = game.players.length - 1; i >= 0; i--) {
-							if (game.players[i].user_data.id == userID) {
-								game.players[i][key] = data.players[userID];
+							if (game.players[i].user_data.id == uID) {
+								game.players[i][key] = data.players[uID];
 							}
 						}
 					}
@@ -159,7 +154,7 @@ BoardGame.GameLoader.prototype = {
 				var notReady = false;
 				this.loadingText.text = "Waiting for other players... (";
 				for (var i = game.players.length - 1; i >= 0; i--) {
-					if (game.players[i].state != 2 || game.players[i].state == 101) {
+					if (game.players[i].state < 2 && game.players[i].state != 101) {
 						notReady = true;
 						this.loadingText.text += game.players[i].user_data.name + ", ";
 					}

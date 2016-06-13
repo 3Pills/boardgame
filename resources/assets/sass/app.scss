@@ -23,27 +23,55 @@ h1,h2,h3,h4,h5,h6 {
 	//border-radius: 4px;
 }
 
+
+.navbar-default {
+	border-top: 0px;
+	border-left: 0px;
+	border-right: 0px;
+	border-radius: 0px;
+}
+
 .navbar-container {
 	margin: 0px auto;
 	max-width: 1000px !important;
+	height: 50px;
+	border-radius: 0px;
 }
 
 .navbar-nav {
 	margin: 0px;
+	height: 100%;
+	float:left;
 	> li {
-		float: left;
+		float:left;
 		> a {
 			padding: 15px 10px;
 		}
 	}
 }
 
-.navbar-profile {
-	width:34px;
-	height:34;
+.navbar-right {
 	float:right;
-	margin-left:7px;
-	margin-top:-7px;
+}
+
+.navbar-profile {
+	height: 100%;
+	padding: 0px;
+}
+
+.navbar-profile-link {
+	height: 100%;
+}
+
+.navbar-profile-username {
+}
+
+.navbar-profile-avatar {
+	width:34px;
+	height:34px;
+	float:right;
+	margin-top: -6px;
+	margin-left: 6px;
 }
 
 .profile-avatar {
@@ -179,26 +207,53 @@ h1,h2,h3,h4,h5,h6 {
 
 .game-overlay-top {
 	width:100%;
+	height:30px;
 	position:absolute;
+	opacity: 0;
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+	-webkit-transition: opacity .25s ease-in-out;
+
+
+	&:hover {
+		opacity: 0.85;
+	}
+	pointer-events:none;
+
+	top:0px;
 }
 
 .game-overlay-bottom {
 	width:100%;
+	height:30px;
 	position:absolute;
-	bottom:0;
+	opacity: 0;
+	transition: opacity .25s ease-in-out;
+	-moz-transition: opacity .25s ease-in-out;
+	-webkit-transition: opacity .25s ease-in-out;
+
+	&:hover {
+		opacity: 0.85;
+	}
+	pointer-events:none;
+
+	bottom:0px;
 }
 
-.game-overlay-bottom-right {
+.game-overlay-right {
 	float: right;
+	height: 100%;
+	width: 100px;
 }
 
-.options {
+.game-overlay-options {
 	width:220px;
 	position:absolute;
 	right: 0;
+	pointer-events:visiblePainted;
 }
 
-.options-menu {
+.game-overlay-options-menu {
 	background: rgba(0,0,0,0.4);
 	padding: 16px;
 	position:relative;
@@ -207,12 +262,22 @@ h1,h2,h3,h4,h5,h6 {
 	color:#FFF;
 	text-shadow: 1px 1px 1px #000000;
 	max-height: 150px !important;
+	pointer-events:visiblePainted;
 }
 
-.options-button {
+.game-overlay-fullscreen-button {
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	z-index: 3;
+	pointer-events:visiblePainted;
+}
+
+.game-overlay-options-button {
 	position: absolute;
 	right: 0;
 	z-index: 3;
+	pointer-events:visiblePainted;
 }
 
 .shoutbox {
@@ -271,6 +336,7 @@ input[type=checkbox] {
 
 /* Tablet CSS Definitions */
 @media (min-width: 768px) {
+
 }
 
 /* Mobile CSS Definitions */
@@ -285,7 +351,7 @@ input[type=checkbox] {
 	    }
 	}
 
-	.navbar-username {
+	.navbar-profile-username {
 		display:none;
 	}
 
@@ -295,7 +361,6 @@ input[type=checkbox] {
 	}
 
 	.navbar-right {
-		width:100%;
 		>li {
 			float:right;
 			width:100%;
@@ -303,14 +368,17 @@ input[type=checkbox] {
 	}
 
 	.navbar-nav .open .dropdown-menu {
-	    position: static;
+	    position: absolute;
 	    float: none;
 	    width: auto;
+	    right: 0; 
+	    left: auto;
 	    margin-top: 0;
-	    background-color: transparent;
-	    border: 0;
-	    -webkit-box-shadow: none;
-	    box-shadow: none;
+	    background-color: #fff;
+	    border: 1px solid #ccc;
+	    border: 1px solid rgba(0,0,0,.15);
+	    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    	box-shadow: 0 6px 12px rgba(0,0,0,.175);
 	}
 }
 

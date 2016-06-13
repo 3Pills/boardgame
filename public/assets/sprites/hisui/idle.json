@@ -101,6 +101,7 @@
 "meta": {
 	"image": "idle.png",
 	"size": {"w": 270, "h": 312},
-	"scale": "1"
+	"scale": "1",
+	"fps": 20
 }
 }

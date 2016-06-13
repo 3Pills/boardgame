@@ -11,19 +11,13 @@
 <meta property="og:description" content="Game Lobby for {{$game->name}} on Play Vidya Soon" />
 @stop
 
-@section('css')
-	<style> .navbar { margin: 0px; } </style>
-@stop
-
-@section('post-content')
+@section('content')
 	<div class="container-game docked">
 		<div class="game-overlay-top">
-			<div class="panel-group options">
-				<div>
-					<button data-toggle="collapse" data-target="#options" class="options-button"><span class="glyphicon glyphicon-wrench"></span></button>
-				</div>
-				<div id="options" class="collapse">
-					<div class="options-menu">
+			<div class="game-overlay-right">
+				<button data-toggle="collapse" data-target="#options" class="game-overlay-options-button"><span class="glyphicon glyphicon-wrench"></span></button>
+				<div id="options" class="game-overlay-options collapse">
+					<div class="game-overlay-options-menu">
 						Sound: <input type="range" name="sound-range" id="sound-range" class="chat-input" min="0" max="100" oninput="changeVolSound(this.value)" onchange="changeVolSound(this.value)">
 						Music: <input type="range" name="music-range" id="music-range" class="chat-input" min="0" max="100" oninput="changeVolMusic(this.value)" onchange="changeVolMusic(this.value)">
 					</div>
@@ -46,8 +40,8 @@
 		</div>
 
 		<div class="game-overlay-bottom">
-			<div class="game-overlay-bottom-right">
-				<button class="game-overlay-fullscreen"><span class="glyphicon glyphicon-resize-full"></span></button>
+			<div class="game-overlay-right">
+				<button class="game-overlay-fullscreen-button"><span class="glyphicon glyphicon-resize-full"></span></button>
 			</div>
 		</div>
 		
@@ -81,6 +75,7 @@
 		Phaser.SoundManager.prototype.playMusic = function(soundID) {
 			if (this.music === undefined) this.music = {};
 			if (game.cache.getJSON('music_data').start[soundID] === true) {
+				if (game.cache.checkSoundKey('bgm'+soundID+'_loop') === false || game.cache.checkSoundKey('bgm'+soundID+'_start') === false) { return; }
 				if (this.music.loop === undefined) this.music.loop  = this.add('bgm'+soundID+'_loop');
 				else {
 					this.music.loop.destroy();
@@ -89,29 +84,31 @@
 				if (this.music.start === undefined) this.music.start = this.add('bgm'+soundID+'_start');
 				else {
 					this.music.start.destroy();
-					this.music.start = this.add('bgm'+soundID+'start');
+					this.music.start = this.add('bgm'+soundID+'_start');
 				}
 				if (this.music.loop  === undefined || this.music.start === undefined) return;
 				
+				this.music.start.volume = this.music.volume;
+				this.music.loop.volume = this.music.volume;
+
 				this.setDecodedCallback([this.music.start, this.music.loop], function() {
 					this.music.start.onStop.add(function() { this.music.loop.loopFull(); }, this)
 					this.music.start.play(); 
 				}, this);
-				console.log(this.music);
-				this.music.start.volume = this.music.volume;
-				this.music.loop.volume = this.music.volume;
+
 				return this.music.start;
 			}
 			else {
+				if (game.cache.checkSoundKey('bgm'+soundID+'_loop') === false) { return; }
 				if (this.music.loop === undefined) this.music.loop = this.add('bgm'+soundID+'_loop');
 				else {
 					this.music.loop.destroy();
 					this.music.loop = this.add('bgm'+soundID+'_loop');
 				}
 				if (this.music.loop === undefined) return;
+				this.music.loop.volume = this.music.volume;
 				
 				this.setDecodedCallback([this.music.loop], function() { this.music.loop.loopFull(); }, this);
-				this.music.loop.volume = this.music.volume;
 				return this.music.loop;
 			}
 		}
@@ -122,13 +119,23 @@
 			// if (Number.isInteger(number)) { this.currPalette = game.math.clamp(number, 0, this.paletteData.length-1); }		
 
 			// Create array to store the texture data of our palettes.
-			if (this.loadedPalettes === undefined) { this.loadedPalettes = []; }
-			if (this.loadedPalettes[characterID] === undefined) { this.loadedPalettes[characterID] = []; }
+			if (game.loadedPalettes === undefined) { 
+				game.loadedPalettes = [];
+				game.loadedPalettes[characterID] = [];
+				game.loadedPalettes[characterID][this.currPalette] = [];
+			}
+			if (game.loadedPalettes[characterID] === undefined) { 
+				game.loadedPalettes[characterID] = []; 
+				game.loadedPalettes[characterID][this.currPalette] = [];
+			}
+			if (game.loadedPalettes[characterID][this.currPalette] === undefined) { 
+				game.loadedPalettes[characterID][this.currPalette] = []; 
+			}
 
-			if (this.loadedPalettes[characterID][this.currPalette] === undefined) {
+			if (game.loadedPalettes[characterID][this.currPalette][animKey] === undefined) {
 				//Create a new bitmapdata object to store the sprite palette. Each palette requires its own bitmapdata, as each represents a new texture.
-				this.loadedPalettes[characterID][this.currPalette] = game.make.bitmapData();
-				var bmd = this.loadedPalettes[this.currCharacter][this.currPalette];
+				game.loadedPalettes[characterID][this.currPalette][animKey] = game.make.bitmapData();
+				var bmd = game.loadedPalettes[characterID][this.currPalette][animKey];
 				bmd.load(characterID + animKey); 
 
 				//If we want the default palette, we shouldn't try to replace anything!
@@ -152,11 +159,16 @@
 					}
 				}
 				//Store bitmap data and animation data on the game cache, for instant re-access.
-				game.cache.addTextureAtlas(characterID + animKey + ((this.currPalette == 0) ? '' : this.currPalette), null, bmd.canvas, game.cache.getJSON(this.currCharacter + '_atlas'), Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+				if (reloadAnim !== false) {
+					game.cache.addTextureAtlas(characterID + animKey + ((this.currPalette == 0) ? '' : this.currPalette), null, bmd.canvas, game.cache.getJSON(this.currCharacter + animKey + '_atlas'), Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
+				}
+				else {
+					game.cache.addImage(characterID + animKey + ((this.currPalette == 0) ? '' : this.currPalette), null, bmd.canvas);
+				}
 			}
-			this.loadTexture(characterID + animKey + ((this.currPalette == 0) ? '' : this.currPalette), this.animations.currentAnim.currentFrame.index, false);
+			this.loadTexture(characterID + animKey + ((this.currPalette == 0) ? '' : this.currPalette), (reloadAnim !== false) ? this.animations.currentAnim.currentFrame.index : null, false);
 			if (reloadAnim === true) {
-				this.animations.add(characterID + animKey, null, 20, true);
+				this.animations.add(characterID + animKey, null, game.cache.getJSON(this.currCharacter + animKey + '_atlas').meta.fps, true);
 				this.animations.play(characterID + animKey);
 			}
 		}
@@ -168,7 +180,7 @@
 
 		}
 
-		$('.game-overlay-fullscreen').click(function() {
+		$('.game-overlay-fullscreen-button').click(function() {
 			if (game.scale.isFullScreen)
 				game.scale.stopFullScreen();
 			else 
@@ -176,9 +188,8 @@
 		});
 
 		//Canvas is used cause FireFox doesn't handle WebGL Sprites very well...
-		var game = new Phaser.Game(1024, 576, Phaser.AUTO, 'gameElement', BoardGame.Boot, false, false);
+		var game = new Phaser.Game(1024, 576, Phaser.CANVAS, 'gameElement', BoardGame.Boot, false, false);
 
-        var music_url = base_url + 'assets/audio/music/' + 'lb/';
         var user_id = <?php echo \Auth::user()->id; ?>
 
 		game.state.add('Boot', BoardGame.Boot);

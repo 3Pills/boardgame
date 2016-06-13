@@ -56,6 +56,15 @@ class Player extends Model {
      *
      * @param $query
      */
+    public function scopeNotPartOf($query, $uIDs, $game_id) {
+        return $query->whereNotIn('user_id', $uIDs)->where('game_id', '=', $game_id);
+    }
+
+    /**
+     * Scope players that have been recently updated in a specfic game.
+     *
+     * @param $query
+     */
     public function scopeRecentlyCreated($query, $time, $game_id) {
         return $query->where('created_at', '>', $time)->where('game_id', '=', $game_id);
     }

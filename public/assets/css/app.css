@@ -15,23 +15,43 @@ h1, h2, h3, h4, h5, h6 {
 .container {
   max-width: 1100px !important; }
 
+.navbar-default {
+  border-top: 0px;
+  border-left: 0px;
+  border-right: 0px;
+  border-radius: 0px; }
+
 .navbar-container {
   margin: 0px auto;
-  max-width: 1000px !important; }
+  max-width: 1000px !important;
+  height: 50px;
+  border-radius: 0px; }
 
 .navbar-nav {
-  margin: 0px; }
+  margin: 0px;
+  height: 100%;
+  float: left; }
   .navbar-nav > li {
     float: left; }
     .navbar-nav > li > a {
       padding: 15px 10px; }
 
+.navbar-right {
+  float: right; }
+
 .navbar-profile {
+  height: 100%;
+  padding: 0px; }
+
+.navbar-profile-link {
+  height: 100%; }
+
+.navbar-profile-avatar {
   width: 34px;
-  height: 34;
+  height: 34px;
   float: right;
-  margin-left: 7px;
-  margin-top: -7px; }
+  margin-top: -6px;
+  margin-left: 6px; }
 
 .profile-avatar {
   width: 166px;
@@ -142,34 +162,63 @@ h1, h2, h3, h4, h5, h6 {
 
 .game-overlay-top {
   width: 100%;
-  position: absolute; }
+  height: 30px;
+  position: absolute;
+  opacity: 0;
+  transition: opacity .25s ease-in-out;
+  -moz-transition: opacity .25s ease-in-out;
+  -webkit-transition: opacity .25s ease-in-out;
+  pointer-events: none;
+  top: 0px; }
+  .game-overlay-top:hover {
+    opacity: 0.85; }
 
 .game-overlay-bottom {
   width: 100%;
+  height: 30px;
   position: absolute;
-  bottom: 0; }
+  opacity: 0;
+  transition: opacity .25s ease-in-out;
+  -moz-transition: opacity .25s ease-in-out;
+  -webkit-transition: opacity .25s ease-in-out;
+  pointer-events: none;
+  bottom: 0px; }
+  .game-overlay-bottom:hover {
+    opacity: 0.85; }
 
-.game-overlay-bottom-right {
-  float: right; }
+.game-overlay-right {
+  float: right;
+  height: 100%;
+  width: 100px; }
 
-.options {
+.game-overlay-options {
   width: 220px;
   position: absolute;
-  right: 0; }
+  right: 0;
+  pointer-events: visiblePainted; }
 
-.options-menu {
+.game-overlay-options-menu {
   background: rgba(0, 0, 0, 0.4);
   padding: 16px;
   position: relative;
   z-index: 2;
   color: #FFF;
   text-shadow: 1px 1px 1px #000000;
-  max-height: 150px !important; }
+  max-height: 150px !important;
+  pointer-events: visiblePainted; }
 
-.options-button {
+.game-overlay-fullscreen-button {
   position: absolute;
   right: 0;
-  z-index: 3; }
+  bottom: 0;
+  z-index: 3;
+  pointer-events: visiblePainted; }
+
+.game-overlay-options-button {
+  position: absolute;
+  right: 0;
+  z-index: 3;
+  pointer-events: visiblePainted; }
 
 .shoutbox {
   width: 100%;
@@ -222,24 +271,25 @@ input[type=checkbox] {
     display: block; }
   .navbar-brand .navbar-brand-web {
     display: none; }
-  .navbar-username {
+  .navbar-profile-username {
     display: none; }
   .profile-avatar {
     width: 96px;
     height: 96px; }
-  .navbar-right {
+  .navbar-right > li {
+    float: right;
     width: 100%; }
-    .navbar-right > li {
-      float: right;
-      width: 100%; }
   .navbar-nav .open .dropdown-menu {
-    position: static;
+    position: absolute;
     float: none;
     width: auto;
+    right: 0;
+    left: auto;
     margin-top: 0;
-    background-color: transparent;
-    border: 0;
-    box-shadow: none; } }
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175); } }
 
 #greeting {
   text-align: center; }

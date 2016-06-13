@@ -12,9 +12,11 @@ class CreateGameTurnsTable extends Migration {
     public function up() {
         Schema::create('game_turns', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->integer('user_id')->unsigned()->nullable();
-            $table->foreign('user_id')->references('id')->on('users')->onDelete('set NULL');
-            $table->json('data');
+            $table->integer('user_id')->unsigned();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->integer('game_id')->unsigned();
+            $table->foreign('game_id')->references('id')->on('games')->onDelete('cascade');
+            $table->string('data');
             $table->timestamp('created_at');
         });
     }

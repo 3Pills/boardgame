@@ -1,0 +1,41 @@
+{
+"frames": [
+	{
+		"filename": "1_0000.png",
+		"frame": {"x":31, "y":0, "w":30, "h":45},
+		"spriteSourceSize": {"x":0,"y":0,"w":30,"h":45},
+		"sourceSize": {"w":30,"h":45}
+	},
+	{
+		"filename": "1_0001.png",
+		"frame": {"x":31, "y":46, "w":30, "h":45},
+		"spriteSourceSize": {"x":0,"y":0,"w":30,"h":45},
+		"sourceSize": {"w":30,"h":45}
+	},
+	{
+		"filename": "1_0002.png",
+		"frame": {"x":62, "y":0, "w":30, "h":45},
+		"spriteSourceSize": {"x":0,"y":0,"w":30,"h":45},
+		"sourceSize": {"w":30,"h":45}
+	},
+	{
+		"filename": "1_0003.png",
+		"frame": {"x":0, "y":46, "w":30, "h":45},
+		"spriteSourceSize": {"x":0,"y":0,"w":30,"h":45},
+		"sourceSize": {"w":30,"h":45}
+	},
+	{
+		"filename": "1_0004.png",
+		"frame": {"x":0, "y":0, "w":30, "h":45},
+		"spriteSourceSize": {"x":0,"y":0,"w":30,"h":45},
+		"sourceSize": {"w":30,"h":45}
+	}
+
+],
+"meta": {
+	"image": "idle.png",
+	"size": {"w": 93, "h": 92},
+	"scale": "1",
+	"fps": 8
+}
+}

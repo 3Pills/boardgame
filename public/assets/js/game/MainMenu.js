@@ -5,12 +5,13 @@ BoardGame.MainMenu.prototype = {
 
 	create: function () {
 		game.stage.backgroundColor = '#5577FF';
+		game.players = [];
 		//game.world.setBounds(0, 0, 1920, 1920);
 		
 		this.sprite = game.add.sprite(512, 375,'0_idle');
 		this.sprite.anchor.set(0.5, 1);
 		
-		this.sprite.animations.add('0_idle', null, 20, true);
+		this.sprite.animations.add('0_idle', null, game.cache.getJSON('0_idle_atlas').meta.fps, true);
 		this.sprite.animations.play('0_idle');
 
 		this.sprite.currCharacter = 0;
@@ -25,17 +26,18 @@ BoardGame.MainMenu.prototype = {
 
 		var count = 0;
 		for (var i = game.players.length - 1; i >= 0; i--) {
-			game.players[i].sprite = game.add.sprite(320 + 128 * count, 400, game.players[i].character + '_idle');
-			game.players[i].sprite.anchor.set(0.5, 1);
+			var ply = ply;
+			ply.sprite = game.add.sprite(320 + 128 * count, 400, ply.character + '_idle');
+			ply.sprite.anchor.set(0.5, 1);
 			
-			game.players[i].sprite.animations.add(game.players[i].character + '_idle', null, 20, true);
-			game.players[i].sprite.animations.play(game.players[i].character + '_idle');
+			ply.sprite.animations.add(ply.character + '_idle', null, 20, true);
+			ply.sprite.animations.play(ply.character + '_idle');
 
-			game.players[i].sprite.currCharacter = game.players[i].character;
-			game.players[i].sprite.currPalette = game.players[i].palette;
+			ply.sprite.currCharacter = ply.character;
+			ply.sprite.currPalette = ply.palette;
 
-			game.players[i].sprite.paletteData = game.cache.getJSON(game.players[i].character + '_palettes');
-        	game.players[i].sprite.loadPalette(game.players[i].character, '_idle');
+			ply.sprite.paletteData = game.cache.getJSON(ply.character + '_palettes');
+        	ply.sprite.loadPalette(ply.character, '_idle');
         	count += 1;
 		}
 
@@ -74,7 +76,7 @@ BoardGame.MainMenu.prototype = {
 	    //game.camera.follow(this.vol_slider);
 		
 
-		this.button = game.add.button(512, 476, 'start_button', this.startGame, this, 2, 1, 0)
+		this.button = game.add.button(512, 476, 'ready_button', this.postReady, this, 2, 1, 0)
 		this.button.anchor.set(0.5);
 
 		//Let the server know we've joined the game.
@@ -116,27 +118,27 @@ BoardGame.MainMenu.prototype = {
 	    this.latest = {
 	    	'chat': 0,
 	    	'pList': 0,
-	    	'pData': 0,
 	    };
 
-		this.joinCountText  = game.add.text(32, 20, "Users joined: 0", { font: "12px Arial", fill: "#ffffff", align: "left" });
+		this.joinCountText  = game.add.text(32, 20, "Status: Haven't Joined", { font: "12px Arial", fill: "#ffffff", align: "left" });
 		this.joinPlayerText = game.add.text(32, 50, "List of Players:\n", { font: "12px Arial", fill: "#ffffff", align: "left" });
 
-		var button = game.add.button(256, 476, 'start_button', this.postJoin, this, 2, 1, 0);
-		button.anchor.set(0.5);
+		this.button2 = game.add.button(256, 476, 'join_button', this.postJoin, this, 2, 1, 0);
+		this.button2.anchor.set(0.5);
 
 		game.sound.playMusic(0);
 
 	    //  Create our Timer
 	    this.timers = {
-	    	getPlayerList: game.time.create(false).loop(2000, this.getPlayerList, this).timer
+	    	getPlayerList: game.time.create(false).loop(2000, this.getPlayerList, this).timer,
+	    	getPlayerData: game.time.create(false).loop(1500, this.getPlayerData, this, 'state').timer
 	    } 
 	    this.getPlayerList();
 	    this.timers.getPlayerList.start();
 	},
 
 	update: function () {
-		game.input.enabled = game.input.activePointer.withinGame;
+		//game.input.enabled = game.input.activePointer.withinGame;
 	},
 	
 	render: function () {
@@ -205,42 +207,74 @@ BoardGame.MainMenu.prototype = {
 	},
 
 	getPlayerList: function() {
+		var uIDs = [];
+		for (var pID in game.players) {
+			uIDs.push(game.players[pID].user_data.id);
+		}
 		$.get({
 			url: window.location+'/pList',
 			context: this,
-			data: {ts: this.latest.pList},
+			data: {uIDs: uIDs},
 			success: function(data) {
 				if (Object.keys(data).length > 0) {
 					this.latest.pList = data.time;
-					for (var userID in data.players) {
-						game.players.push(data.players[userID]);
-						this.joinPlayerText.text = this.joinPlayerText.text + data.players[userID].user_data.name + '\n';
+					game.players = game.players.concat(data.players);
+					//game.players.sort(function(a, b) {return moment.utc(a.created_at).valueOf() > moment.utc(b.created_at).valueOf()})
+					this.joinPlayerText.text = "List of Players:\n";
+					for (var pID in game.players) {
+						this.joinPlayerText.text = this.joinPlayerText.text + game.players[pID].user_data.name + '\n';
 					}
-					this.joinCountText.text = "Users joined: " + game.players.length;
 				}
 			}
 		});
 	},
 
 	getPlayerData: function(key) {
+		var keyData = {};
+		for (var pID in game.players) {
+			keyData[game.players[pID].user_data.id] = game.players[pID][key];
+		}
 		$.get({
 			url: window.location+'/pData',
 			context: this,
-			data: {ts: this.latest.pData, key: key },
+			data: {key: key, keyData: keyData },
 			success: function(data) {
 				if (Object.keys(data).length > 0) {
-					this.latest.pData = data.time;
-
-					for (var userID in data.players) {
+					for (var uID in data.players) {
 						for (var i = game.players.length - 1; i >= 0; i--) {
-							if (game.players[i].user_data.id == userID) {
-								game.players[i][key] = data.players[userID][key];
+							if (game.players[i].user_data.id == uID) {
+								game.players[i][key] = data.players[uID];
 							}
 						}
 					}
+					this.successfulUpdate(key);
 				}
 			}
 		});
+	},
+
+	successfulUpdate: function(key) {
+		switch(key) {
+			case 'state':
+				var notReady = false;
+				if (game.players.length <= 1) return;
+				this.joinCountText.text = "Waiting for other players to ready up... (";
+				for (var i = game.players.length - 1; i >= 0; i--) {
+					if (game.players[i].state < 1) {
+						notReady = true;
+						this.joinCountText.text += game.players[i].user_data.name + ", ";
+					}
+				}
+				this.joinCountText.text += ")";
+
+				if (notReady) return;
+				this.joinCountText.text = "Status: Everyone's Ready! Starting in 3 seconds..."
+
+				game.time.events.add(Phaser.Timer.SECOND * 0.1, function() { this.state.start('GameLoader'); }, this);
+				break;
+			default:
+				break;
+		}
 	},
 
 	postJoin: function() {
@@ -249,7 +283,9 @@ BoardGame.MainMenu.prototype = {
 			data: {character: this.sprite.currCharacter, palette: this.sprite.currPalette},
 			context: this,
 			success: function(data) {
-				// Do stuff when you are approved to join.
+				if (data.status == 1) this.joinCountText.text = "Status: Joined the game! Be sure to ready up once you're happy with your character, otherwise, change the character and click the join button again."
+				else if (data.status == 2) this.joinCountText.text = "Status: Character updated! Don't keep the others waiting...";
+				else this.joinCountText.text = "Status: Game is full or you've already joined it!"
 			}
 		});
 	},
@@ -260,7 +296,8 @@ BoardGame.MainMenu.prototype = {
 			data: {},
 			context: this,
 			success: function(data) {
-				// Do stuff when you are approved to ready.
+				this.joinCountText.text = "Status: Ready! Checking on other users statuses..."
+	   			this.timers.getPlayerData.start();
 			}
 		});
 	},
@@ -268,16 +305,6 @@ BoardGame.MainMenu.prototype = {
 	postCharacter: function() {
 		$.post({
 			url: window.location+'/character',
-			context: this,
-			success: function(data) {
-				this.randNumb = data;
-	    	}
-		});
-	},
-
-	postRoll: function() {
-		$.post({
-			url: window.location+'/roll',
 			context: this,
 			success: function(data) {
 				this.randNumb = data;

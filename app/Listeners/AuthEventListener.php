@@ -14,6 +14,22 @@ class AuthEventListener
         //
     }
 
+    public function logAuthenticationAttempt($event) {
+
+    }
+
+    public function logSuccessfulLogin($event) {
+
+    }
+
+    public function logSuccessfulLogout($event) {
+
+    }
+
+    public function logLockout($event) {
+
+    }
+
     /**
      * Handle the event.
      *

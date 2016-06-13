@@ -15,6 +15,7 @@ class CreateGamesTable extends Migration {
             $table->string('name');
             $table->string('url')->unique();
             $table->tinyInteger('map')->unsigned();
+            $table->tinyInteger('state')->unsigned();
             $table->boolean('private')->default(false)->index();
             $table->timestamp('created_at');
         });

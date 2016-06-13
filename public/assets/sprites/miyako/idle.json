@@ -53,6 +53,7 @@
 "meta": {
 	"image": "idle.png",
 	"size": {"w": 212, "h": 170},
-	"scale": "1"
+	"scale": "1",
+	"fps": 20
 }
 }
