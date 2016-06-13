@@ -23,14 +23,6 @@ h1,h2,h3,h4,h5,h6 {
 	//border-radius: 4px;
 }
 
-.container-game {
-	width: 100%;
-	height: 100%;
-	max-width: 1024px !important;
-	max-height: 768px !important;
-	margin: 0px auto;
-}
-
 .navbar-container {
 	margin: 0px auto;
 	max-width: 1000px !important;
@@ -120,32 +112,107 @@ h1,h2,h3,h4,h5,h6 {
     height: 60px;
 }
 
+.lobby-card {
+	min-width:128px; 
+	padding:4px;
+	text-decoration:none;
+}
 
-.game-overlay {
+.lobby-card-button {
 	width:100%;
-	max-width:1024px!important;
-	height:100%;
-	max-height:768px!important;
+	padding:2px;
+	text-decoration:none;
+}
+
+.lobby-card-preview {
+	width:32px;
+	height:32px;
+	float:left;
+}
+
+.lobby-card-player {
+	padding:0px;
+	margin: 4px 0px;
+}
+
+.lobby-card-row {
+	padding:0px;
+}
+
+.lobby-card-player-image {
+	display:block;
+	margin:0px auto;
+}
+
+.lobby-card-player-name {
+	text-align:center;
+}
+
+.fullscreen {
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.docked {
+	position: relative;
+	top: 0;
+	left: 0;
+	max-width: 1024px !important;
+	max-height: 576px !important;
+	margin: 0px auto;
+}
+
+.container-game {
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+}
+
+.game-element {
+	background: #5577FF;
+	canvas {
+		margin: 0px auto;
+	}
+}
+
+.game-overlay-top {
+	width:100%;
 	position:absolute;
+}
+
+.game-overlay-bottom {
+	width:100%;
+	position:absolute;
+	bottom:0;
+}
+
+.game-overlay-bottom-right {
+	float: right;
 }
 
 .options {
-	width:100%;
+	width:220px;
 	position:absolute;
-	max-width:1024px!important;
-	padding: 0px 0px 0px 80%;
+	right: 0;
 }
 
-.options-window {
-    width: 20%;
-	max-width:1024px!important;
-    height: 100%;
-    position: absolute;
-	z-index: 1;
+.options-menu {
+	background: rgba(0,0,0,0.4);
+	padding: 16px;
+	position:relative;
+	z-index: 2;
 
-    background: #000;
-    opacity: 0.4;
-	filter: alpha(opacity=40);
+	color:#FFF;
+	text-shadow: 1px 1px 1px #000000;
+	max-height: 150px !important;
+}
+
+.options-button {
+	position: absolute;
+	right: 0;
+	z-index: 3;
 }
 
 .shoutbox {
@@ -153,18 +220,10 @@ h1,h2,h3,h4,h5,h6 {
 	margin:0px;
 }
 
-.options-button {
-	width:10%;
-	max-width:1024px!important;
-	position:absolute;
-	margin:0px 90%;
-}
-
 .chat {
 	width:60%;
 	position:absolute;
-	max-width:1024px!important;
-	margin: 0px 20%;
+	left: 20%;
 }
 
 .chat-button {

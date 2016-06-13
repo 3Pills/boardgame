@@ -1,19 +1,19 @@
 {
 "frames": [
 	{
-		"filename": "start_button_down.png",
+		"filename": "roll_button_down.png",
 		"frame": {"x":0, "y":66, "w":128, "h":32},
 		"spriteSourceSize": {"x":0,"y":0,"w":128,"h":32},
 		"sourceSize": {"w":128,"h":32}
 	},
 	{
-		"filename": "start_button_out.png",
+		"filename": "roll_button_out.png",
 		"frame": {"x":0, "y":33, "w":128, "h":32},
 		"spriteSourceSize": {"x":0,"y":0,"w":128,"h":32},
 		"sourceSize": {"w":128,"h":32}
 	},
 	{
-		"filename": "start_button_over.png",
+		"filename": "roll_button_over.png",
 		"frame": {"x":0, "y":0, "w":128, "h":32},
 		"spriteSourceSize": {"x":0,"y":0,"w":128,"h":32},
 		"sourceSize": {"w":128,"h":32}
@@ -21,7 +21,7 @@
 
 ],
 "meta": {
-	"image": "start_button.png",
+	"image": "roll_button.png",
 	"size": {"w": 129, "h": 99},
 	"scale": "1"
 }

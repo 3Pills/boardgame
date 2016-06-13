@@ -15,14 +15,14 @@ class CreateUsersTable extends Migration {
             $table->string('name', 24);
             $table->string('email')->unique();
             $table->string('password');
-            $table->integer('role')->unsigned()->default(0);
+            $table->tinyInteger('role')->unsigned()->default(0);
 
             $table->string('url', 32)->unique();
             $table->string('about')->nullable();
-            $table->integer('fave_char')->unsigned()->nullable();
+            $table->tinyInteger('fave_char')->unsigned()->nullable();
 
-            $table->integer('level')->unsigned()->default(1);
-            $table->integer('exp')->unsigned()->default(0);
+            $table->smallInteger('level')->unsigned()->default(1);
+            $table->smallInteger('exp')->unsigned()->default(0);
 
             $table->rememberToken();
             $table->timestamps();

@@ -4,25 +4,33 @@
 
 @section('content')
 
-<?php $mapNames = [1=>'Downtown']; ?>
+<?php $mapNames = [0=>'Downtown']; ?>
 <div class="row">
 	<div class="col-sm-4">
 		<h3>Lobbies</h3>
 		<div class="lobby-list" style="height:500px;">
 		@foreach (\App\Game::all()->sortBy('name') as $key=>$game)
-			<div style="min-width:128px; padding:2px;">
-				<a href="{{'game/'.$game->url}}" class="">
-					<div class="panel panel-default panel-body">
-						<img src="{{ url('./assets/images/default-avatar.png') }}" alt="avatar" class="profile-avatar" style="float:left;width:34px;height:34px;margin-right:8px;"/>
-				    	<div>
-				        	<p>Game Name: {{$game->name}}</p>
-				        	<p>Game Map: {{ isset($mapNames[$game->map]) ? $mapNames[$game->map] : "InvalidMap" }} </p>
-							@foreach ($game->players()->get() as $key=>$player)
-					        	<p>{{ $player->id }}</p>
-							@endforeach
-				        </div>
-				    </div>
+			<div class="lobby-card well">
+				<a href="{{'game/'.$game->url}}">				<div class="lobby-card-base" style="height:50px;">
+					<div class="col-sm-2">
+						<img src="{{ url('./assets/images/default-avatar.png') }}" alt="avatar" class="lobby-card-preview">
+					</div>
+		        	<div class="col-sm-10">
+			        	<div>Game Name: {{ $game->name }}</div>
+			        	<div>Game Map: {{ isset($mapNames[$game->map]) ? $mapNames[$game->map] : "InvalidMap" }} </div>
+			        </div>
+		        </div>
 			    </a>
+
+				<button data-toggle="collapse" data-target="#players" class="btn btn-default lobby-card-button">Players: {{$game->players()->count()}} <span class="caret"></span></button>
+				<div id="players" class="collapse well well-sm row lobby-card-row">
+					@foreach ($game->players()->get() as $player)
+					<div class="col-xs-3 lobby-card-player">
+						<div><img class="lobby-card-player-image" src="{{url('./assets/sprites/portrait/'.$player->character.'.png')}}"/></div>
+						<div class="lobby-card-player-name">{{ \App\User::where('id', '=', $player->user_id)->first()->name }}</div>
+					</div>
+					@endforeach
+				</div>
 			</div>
 		@endforeach
 		</div>
@@ -60,18 +68,10 @@
 						<div class="col-sm-9"> <input type="text" name="name" class="form-control"/> </div>
 					</div>
 					<div class="form-group">
-						<label for="character" class="control-label col-sm-3">Character:</label>
-						<div class="col-sm-9"> 
-							<select name="character" class="form-control">
-								<option value="1">Hisui</option>
-							</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label for="map" class="control-label col-sm-3">Character:</label>
+						<label for="map" class="control-label col-sm-3">Map:</label>
 						<div class="col-sm-9"> 
 							<select name="map" class="form-control">
-								<option value="1">Downtown</option>
+								<option value="0">Downtown</option>
 							</select>
 						</div>
 					</div>
@@ -87,7 +87,8 @@
 				</form>
 			</div>
 			<div id="join_lobby" class="tab-pane panel panel-default panel-tab panel-body">
-
+				<form id="game_joiner" method="POST" action="{{ url('/join') }}" role="form" class="form-horizontal" accept-charset="UTF-8">
+				</form>
 			</div>
 			<div id="menu2" class="tab-pane">
 
@@ -102,6 +103,7 @@
 @stop
 
 @section('scripts-deferred')
+<!--
 <script>
 	$( "#lobby_creator" ).submit(function( event ) {
 		event.preventDefault();
@@ -109,10 +111,25 @@
 		var post = $.post({
 			url: url,
 			context: this,
+			data: $form.serialize(),
+			success: function(data) {
+				alert('lobby created at '+data.url);
+			}
+		});
+	});
+
+	$( "#game_joiner" ).submit(function( event ) {
+		event.preventDefault();
+		var $form = $(this), url = $form.attr('action');
+		var post = $.post({
+			url: url,
+			context: this,
+			data: $form.serialize(),
 			success: function(data) {
 				alert('lobby created at '+data.url);
 			}
 		});
 	});
 </script>
+-->
 @stop

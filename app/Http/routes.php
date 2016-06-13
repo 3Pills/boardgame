@@ -45,8 +45,12 @@ Route::group(['middleware' => ['web']], function() {
             Route::get('update/', 'GamesController@getUpdate');
             Route::post('update/', 'GamesController@postUpdate');
 
+            Route::get('pList/', 'GamesController@getPlayerList');
+            Route::get('pData/', 'GamesController@getPlayerData');
 
             Route::post('join/', 'GamesController@postJoin');
+            Route::post('ready/', 'GamesController@postReady');
+            Route::post('loaded/', 'GamesController@postLoaded');
 
             Route::post('ping/', 'GamesController@postPing');
 
@@ -55,9 +59,6 @@ Route::group(['middleware' => ['web']], function() {
 
             Route::get('roll/', 'GamesController@getRoll');
             Route::post('roll/', 'GamesController@postRoll');
-
-            Route::get('playerLoaded/', 'GamesController@getPlayerLoaded');
-            Route::post('playerLoaded/', 'GamesController@postPlayerLoaded');
         });
     });
 

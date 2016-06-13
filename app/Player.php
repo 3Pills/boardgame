@@ -12,13 +12,16 @@ class Player extends Model {
      */
     protected $table = 'players';
 
+    
+    protected $primaryKey = 'user_id';
+
     /**
      * Fillable attributes that can be mass assigned.
      *
      * @var array
      */
     protected $fillable = [ 
-        'game_id', 'user_id'
+        'game_id', 'user_id', 'state', 'character', 'palette'
     ];
 
 
@@ -46,5 +49,41 @@ class Player extends Model {
      */
     public function user() {
         return $this->belongsTo('App\User');
+    }
+
+    /**
+     * Scope players that have been recently updated in a specfic game.
+     *
+     * @param $query
+     */
+    public function scopeRecentlyCreated($query, $time, $game_id) {
+        return $query->where('created_at', '>', $time)->where('game_id', '=', $game_id);
+    }
+
+    /**
+     * Scope players that have been recently updated in a specfic game.
+     *
+     * @param $query
+     */
+    public function scopeRecentlyUpdated($query, $time, $game_id) {
+        return $query->where('updated_at', '>', $time)->where('game_id', '=', $game_id);
+    }
+
+    /**
+     * Scope players that have been recently updated in a specfic game.
+     *
+     * @param $query
+     */
+    public function scopeRecentlyCreatedUser($query, $time, $game_id, $user_id) {
+        return $query->where('created_at', '>', $time)->where('game_id', '=', $game_id)->where('user_id', '=', $user_id);
+    }
+
+    /**
+     * Scope players that have been recently updated in a specfic game.
+     *
+     * @param $query
+     */
+    public function scopeRecentlyUpdatedUser($query, $time, $game_id, $user_id) {
+        return $query->where('updated_at', '>', $time)->where('game_id', '=', $game_id)->where('user_id', '=', $user_id);
     }
 }

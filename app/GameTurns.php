@@ -17,8 +17,7 @@ class GameTurns extends Model {
      *
      * @return
      */
-    public static function boot()
-    {
+    public static function boot() {
         static::creating(function ($model) {
             $model->created_at = $model->freshTimestamp();
         });
@@ -37,7 +36,7 @@ class GameTurns extends Model {
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password', 'biography', 'image',
+        'user_id', 'data',
     ];
 
 }

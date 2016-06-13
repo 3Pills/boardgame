@@ -27,7 +27,7 @@ class User extends Authenticatable {
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token',
+        'email', 'password', 'remember_token'
     ];
 
     /**
@@ -36,7 +36,7 @@ class User extends Authenticatable {
      * @param $query
      */
     public function scopeAdmin($query) {
-        $query->where('is_admin', '=', true);
+        return $query->where('is_admin', '=', true);
     }
 
     /**

@@ -7,9 +7,13 @@ BoardGame.Boot = function (game) {
 BoardGame.Boot.prototype = {
 
     init: function () {
-        this.input.maxPointers = 1;
-        this.stage.disableVisibilityChange = true;
-        this.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.input.maxPointers = 1;
+        game.stage.disableVisibilityChange = true;
+
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.scale.fullScreenScaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.scale.fullScreenTarget = $('.container-game').get(0);
+        game.scale.onFullScreenChange.add(this.toggleFullscreen, this);
 
         game.state.add('Preloader', BoardGame.Preloader);
         game.state.add('MainMenu', BoardGame.MainMenu);
@@ -18,7 +22,7 @@ BoardGame.Boot.prototype = {
         game.state.add('GameFinish', BoardGame.GameFinish);
 
         game.sound.sound_vol = 0.5;
-        game.sound.music_vol = 0.1;
+        game.sound.music_vol = 0.0;
 
         game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
     },
@@ -28,11 +32,18 @@ BoardGame.Boot.prototype = {
         game.load.image('preloadBackground', base_url + 'assets/sprites/preload_bg.png');
         game.load.image('preloadBar', base_url + 'assets/sprites/title_card.png');
         
-        game.load.json('music-data', music_url +'/data.json');
+        game.load.json('music_data', music_url +'/data.json');
+        game.load.json('character_data', base_url + 'assets/sprites/characters.json');
     },
 
     create: function () {
         this.state.start('Preloader');
-    }
+    },
 
+    toggleFullscreen: function() {
+        $('.container-game').toggleClass('fullscreen');
+        $('.container-game').toggleClass('docked');
+        $('.game-overlay-fullscreen').find( 'glyphicon' ).toggleClass('glyphicon-resize-full');
+        $('.game-overlay-fullscreen').find( 'glyphicon' ).toggleClass('glyphicon-resize-small');
+    }
 };

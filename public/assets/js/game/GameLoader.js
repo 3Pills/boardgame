@@ -27,48 +27,81 @@ BoardGame.GameLoader = function (game) {
 };
 
 BoardGame.GameLoader.prototype = {
-	init: function (spriteData) {
-		console.log(spriteData);
-		this.spriteData = spriteData;
-	},
+	init: function (bgm_start, bgm_loop) {
+		this.bgm_start = bgm_start;
+		this.bgm_loop = bgm_loop;
+	    this.latest = {
+	    	'pData': 0,
+	    };
 
-	preload: function () {
-		this.preloadBar = this.add.sprite(game.world.centerX, game.world.centerY, 'preloadBar');
+		this.preloadBar = game.add.sprite(game.world.centerX, game.world.centerY, 'preloadBar');
 		this.preloadBar.position.x = game.world.centerX - this.preloadBar.width / 2;
 		this.preloadBar.position.y = game.world.centerY - this.preloadBar.height;
 
 		game.load.setPreloadSprite(this.preloadBar);
 
+		this.loadingText = game.add.text(512, 550, "Loading...", { font: "14px Arial", fill: "#ffffff", align: "center" });
+	},
+
+	preload: function () {
+
+		this.loadingText.text = "Loading Character Data...";
+		var count = 0;
+		var palettes = {};
+		for (var i = game.players.length - 1; i >= 0; i--) {
+			game.players[i].sprite = game.add.sprite(320 + 128 * count, 400, game.players[i].character + '_idle');
+			game.players[i].sprite.anchor.set(0.5, 1);
+			
+			game.players[i].sprite.animations.add(game.players[i].character + '_idle', null, 20, true);
+			game.players[i].sprite.animations.play(game.players[i].character + '_idle');
+
+			game.players[i].sprite.currCharacter = game.players[i].character;
+			game.players[i].sprite.currPalette = game.players[i].palette;
+
+			if (!palettes[game.players[i].character]) {
+				palettes[game.players[i].character] = {};
+			}
+			palettes[game.players[i].character][game.players[i].palette] = true;
+
+			game.players[i].sprite.paletteData = game.cache.getJSON(game.players[i].character + '_palettes');
+        	game.players[i].sprite.loadPalette(game.players[i].character, '_idle');
+        	count += 1;
+		}
+
+		this.loadingText.text = "Loading UI Elements...";
+		game.load.atlasJSONHash('roll_button', base_url + 'assets/sprites/ui/roll_button.png', base_url + 'assets/sprites/ui/roll_button.json');
+
+		this.loadingText.text = "Loading Map Elements...";
+		this.loadingText.anchor.set(0.5, 1);
+
         game.load.image('base_tile', base_url + 'assets/sprites/stage/tile_large.png');
-		
-		this.sprite = game.add.sprite(game.scale.width / 2,game.scale.height / 2,'hisui-idle');
-		this.sprite.anchor.set(0.5);
-		
-		this.sprite.animations.add('idle', null, 20, true);
-		this.sprite.animations.play('idle');
+        game.load.image('point', base_url + 'assets/sprites/point.png');
+        
+		game.load.json('map_data', base_url + 'assets/json/board1.json');
 
-		this.sprite.currPalette = 0;
-		this.sprite.paletteData = game.cache.getJSON('hisui-palettes');
-		this.sprite.atlasData = game.cache.getJSON('hisui-atlas');
+		this.loadingText.text = "Loading Character Data...";
+		var characterData = game.cache.getJSON('character_data');
+		for (var key = characterData.length; key--;) {
+			var dir = base_url + 'assets/sprites/' + characterData[key].dir + '/';
 
-        this.loadPalette(this.sprite, 'hisui-idle');
+			key
+
+			//Load all assets and apply palette swaps to them here.
+
+			//game.load.atlasJSONHash(key + '_idle', dir + 'idle.png', dir + 'idle.json');
+			//game.load.json(key + '_atlas', dir + 'idle.json');
+			//game.load.json(key + '_palettes', dir + 'palettes.json');
+		}
+
+		this.loadingText.text = "Connecting to game...";
 	},
 
 	create: function () {
-		$.post({
-			url: window.location +'/playerLoaded',
-			context: this,
-			success: function(playerData) {
-				if (playerData.length > 0) {
-					
-				}
-	    	}
-		});
-
+		this.postLoaded();
 	    this.timers = {
-	    	pingPlayers: game.time.create(false).loop(500, this.pingPlayers, this).timer
+	    	pingPlayerStates: game.time.create(false).loop(1500, this.pingPlayerStates, this, 'state').timer
 	    } 
-	    this.timers.pingPlayers.start();
+	    this.timers.pingPlayerStates.start();
 	},
 
 	update: function () {
@@ -83,55 +116,65 @@ BoardGame.GameLoader.prototype = {
 		this.state.start('MainMenu');
 	},
 
-	pingPlayers: function () {
-		$.get({
-			url: window.location +'/playerLoaded',
+	postLoaded: function() {
+		$.post({
+			url: window.location +'/loaded',
 			context: this,
 			success: function(playerData) {
-				if (playerData.length > 0 && !this.stateChanged) {
-					this.stateChanged = true;
-					this.state.start('Game');
-				}
+				// Do stuff when you've been approved as finished loading.
+				this.loadingText.text = "Waiting for other players...";
 	    	}
 		});
 	},
-	
-	loadPalette: function(sprite, baseTexture, number) {
-		// Select a number within our range of palettes, if argument defined.
-		if (number !== undefined) { sprite.currPalette = game.math.clamp(number, 0, sprite.paletteData.length-1); }		
 
-		// Create array to store the texture data of our palettes.
-		if (!sprite.loadedPalettes) { sprite.loadedPalettes = []; }
+	pingPlayerStates: function(state) {
+		this.getPlayerData(state);
+	},
 
-		if (sprite.loadedPalettes[sprite.currPalette] === undefined) {
-			//Create a new bitmapdata object to store the sprite palette. Each palette requires its own bitmapdata, as each represents a new texture.
-			sprite.loadedPalettes[sprite.currPalette] = game.make.bitmapData();
-			var bmd = sprite.loadedPalettes[sprite.currPalette];
-			bmd.load(baseTexture); 
+	getPlayerData: function(key) {
+		$.get({
+			url: window.location+'/pData',
+			context: this,
+			data: {ts: this.latest.pData, key: key },
+			success: function(data) {
+				if (Object.keys(data).length > 0) {
+					this.latest.pData = data.time;
 
-			//If we want the default palette, we shouldn't try to replace anything!
-			if (sprite.currPalette != 0) {
-				//Optimisation of rgb replacement. Optimises replaceRGB function call to only be run on different color values.
-				if (!sprite.nonDupes) { 
-					//Store a string of each different combined RGB value, so duplicates are not replaced. Minor optimisation.
-					sprite.nonDupes = []; 
-					for (var i = sprite.paletteData[0].length; i--;) {
-						var joined = sprite.paletteData[0][i].join();
-						if (sprite.nonDupes.indexOf(joined) <= -1) {
-							sprite.nonDupes[i] = joined;
+					for (var userID in data.players) {
+						for (var i = game.players.length - 1; i >= 0; i--) {
+							if (game.players[i].user_data.id == userID) {
+								game.players[i][key] = data.players[userID];
+							}
 						}
 					}
-				}
-				var defRGB = sprite.paletteData[0];
-				var newRGB = sprite.paletteData[sprite.currPalette];
-				// Loop through all palette data and replace each color one by one.
-				for (var slot in sprite.nonDupes) {				
-					bmd.replaceRGB(defRGB[slot][0],defRGB[slot][1],defRGB[slot][2],255,newRGB[slot][0],newRGB[slot][1],newRGB[slot][2],255);
+					this.successfulUpdate(key);
 				}
 			}
-			//Store bitmap data and animation data on the game cache, for instant re-access.
-			game.cache.addTextureAtlas(baseTexture+sprite.currPalette, null, bmd.canvas, sprite.atlasData, Phaser.Loader.TEXTURE_ATLAS_JSON_HASH);
-		}
-		sprite.loadTexture(baseTexture+sprite.currPalette, this.sprite.animations.currentAnim.currentFrame.index, false);
+		});
 	},
+
+	successfulUpdate: function(key) {
+		switch(key) {
+			case 'state':
+				var notReady = false;
+				this.loadingText.text = "Waiting for other players... (";
+				for (var i = game.players.length - 1; i >= 0; i--) {
+					if (game.players[i].state != 2 || game.players[i].state == 101) {
+						notReady = true;
+						this.loadingText.text += game.players[i].user_data.name + ", ";
+					}
+				}
+				this.loadingText.text += ")";
+
+				if (notReady) return;
+				if (this.bgm_start !== undefined)
+					this.bgm_start.stop();
+				if (this.bgm_loop !== undefined)
+					this.bgm_loop.stop();
+				this.state.start('Game');
+				break;
+			default:
+				break;
+		}
+	}
 };

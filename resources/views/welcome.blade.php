@@ -7,11 +7,13 @@
 <h1>Welcome to the website!</h1>
 <p>This site will eventually host a pretty good JavaScript-based multiplayer game. For now just register an account and trust me on this one. It's gonna be pretty real tbh.</p>
 
+<!--
 <h2>Global Shoutbox</h2>
 <div class="shoutbox" style="background:#333;">
 	<div id="chat-text" class="chat-text" style="height:200px;">
 		<div class="text-console">Welcome to the shoutbox!</div>
 	</div>
+
 	<div id="chat-text" class="chat-text">
 		<input type="text" name="chat-input" id="chat-input" class="chat-input" style="width:93%"/><button style="width:7%; display:inline-block;color:#000;">Chat</button>
 	</div>
@@ -19,6 +21,7 @@
 
     @endif
 </div>
+-->
 @stop
 
 @section('scripts-deferred')
