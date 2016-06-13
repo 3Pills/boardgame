@@ -1,0 +1,15 @@
+To play the game on a correctly configured server, do the following:
+
+1. Register an account and verify the email.
+	1a. If you want to remove the verification alert without setting up an email service, change the 'role' of your user to 1 within PHPMyAdmin.
+2. Click 'Play'.
+3. Click the 'Create Lobby' tab in the new window.
+4. Enter a name for your game and click 'Create'.
+
+5. You've made it to the game screen! Now to start playing follow these steps:
+	5a. Select a character / color with arrow keys.
+	5b. Select 'JOIN' when you're pleased with your character.
+	5c. Select 'READY' and wait for other players to join the game and ready up.
+		5cA. To play alone, you could register a second account with another browser. (Logging out and in on another tab will not work, must be another browser).
+	5d. Once in the game, roll the die to your hearts content!
+	

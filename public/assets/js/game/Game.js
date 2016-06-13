@@ -29,7 +29,6 @@ BoardGame.Game.prototype = {
 	init: function () {
 		game.input.activePointer.prevPosition = game.input.activePointer.position.clone();
 		this.turnInProgress = false;
-		this.currPlayer = 0;
 		this.currTurn = 0;
 	},
 
@@ -170,8 +169,7 @@ BoardGame.Game.prototype = {
 	},
 	
 	startMove: function(pID, amount) {
-		this.currPlayer = pID;
-		console.log(this.currTurn, this.currPlayer, game.turns[this.currTurn], amount);
+		console.log(this.currTurn, pID, game.turns[this.currTurn], amount);
 		var ply = game.players[pID];
 		this.turnInProgress = true;
 		this.timers.getTurnData.pause();
@@ -205,7 +203,6 @@ BoardGame.Game.prototype = {
 		this.turnInProgress = false;
 		this.timers.getTurnData.resume();
 		//this.cameraFollowLoose(game.players[pID].sprite);
-		console.log("huh", game.players.length);
 		if (game.turns[this.currTurn]) {
 			for (var pID in game.players) {
 				if (game.players[pID].user_data.id == game.turns[this.currTurn].user_id) {
@@ -243,9 +240,11 @@ BoardGame.Game.prototype = {
 		$.post({
 			url: window.location +'/roll',
 			context: this,
-			success: function(rollData) {
-				this.startMove(this.currPlayer, rollData.roll);
-	    	}
+			success: function(data){
+				if (data.status == 0) {
+					this.getTurnData();
+				}
+			}
 		});
 	},
 
@@ -254,26 +253,28 @@ BoardGame.Game.prototype = {
 			url: window.location+'/tData',
 			context: this,
 			data: {tID: game.turns.length == 0 ? 0 : game.turns[game.turns.length-1].id },
-			success: function(data) {
-				if (Object.keys(data).length > 0) {
-					for (var tID in data.turns) {
-						game.turns.push(data.turns[tID]);
-						if (this.currTurn == game.turns.length-1) {
-							for (var pID in game.players) {
-								if (game.players[pID].user_data.id == data.turns[tID].user_id) {
-									this.currPlayer = Number(pID);
-								}
-							}
+			success: this.processTurn
+		});
+	},
+
+	processTurn: function(data) {
+		console.log(data);
+		if (data.status === 0) {
+			for (var tID in data.turns) {
+				game.turns.push(data.turns[tID]);
+				if (this.currTurn == game.turns.length-1) {
+					for (var pID in game.players) {
+						if (game.players[pID].user_data.id == data.turns[tID].user_id) {
 							switch(data.turns[tID].data.type) {
 								case 1:
-									this.startMove(this.currPlayer, data.turns[tID].data.roll);
+									this.startMove(pID, data.turns[tID].data.roll);
 									break;
 							}
 						}
 					}
 				}
 			}
-		});
+		}
 	},
 
 	getPlayerData: function(key) {

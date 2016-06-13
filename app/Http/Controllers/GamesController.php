@@ -133,11 +133,12 @@ class GamesController extends Controller {
                 foreach ($turns as $key => $turn) {
                     $turn->data = json_decode($turn->data);
                 }
-                return compact('turns');
+                $status = 0;
+                return compact('turns', 'status');
             }
-            return;
+            return ['status' => 1];
         }
-        return;
+        return ['status' => 1];
     }
 
     /**
@@ -253,7 +254,11 @@ class GamesController extends Controller {
         $returnData = $this->setPlayersStage($request, $url, 2);
         if ($returnData['status'] != 3) {
             $game = Game::where('url', '=', $url)->first();
-            if (Player::where('game_id', '=', $game->id)->where('state', '!=', '2')->count() == 0) {
+            $query = Player::where('game_id', '=', $game->id);
+            $players = $query->get()->sortBy('created_at')->values()->first();
+            if ($query->where('state', '!=', '2')->count() == 0) {
+                $players->state = 3;
+                $players->save();
                 $game->state = 2;
                 $game->save();
             }
@@ -279,22 +284,35 @@ class GamesController extends Controller {
      * @return Response
      */
     public function postRoll(Request $request, $url) {
+        $status = 1;
         $game = Game::where('url', '=', $url);
         if ($game->count() > 0) {
             $game = $game->first();
-            $players = Player::where('user_id', '=', $request->user()->id)->where('game_id', '=', $game->id);
-            if ($players->count() == 0) return false;
-            $lastTurn = GameTurns::orderBy('created_at', 'desc');
-            if ($lastTurn->count() > 0) {
-                $lastTurn = $lastTurn->first();
-                $lastTurn->data = json_decode($lastTurn->data);
-                if ($request->user()->id == $lastTurn->user_id && !$lastTurn->data->joinLast) return false;
+            $currPlayer = Player::where('user_id', '=', $request->user()->id)->where('game_id', '=', $game->id);
+            if ($currPlayer->count() == 0 || $currPlayer->first()->state != 3) 
+                return compact('status');
+
+            $turns = GameTurns::create(['game_id' => $game->id, 'user_id' => $request->user()->id, 'data' => json_encode(['type' => 1, 'roll' => rand(1, 12)]) ]);
+
+            if (!isset($turns->data->joinLast)) {
+                $players = Player::where('game_id', '=', $game->id)->get()->sortBy('created_at');
+                foreach ($players as $key => $player) {
+                    if ($player->state == 3) {
+                        $currPly = $key;
+                        $nextPly = ($key + 1) % $players->count();
+                    }
+                }
+                $players[$currPly]->state = 2;
+                $players[$currPly]->save();
+
+                $players[$nextPly]->state = 3;
+                $players[$nextPly]->save();
             }
-            $roll = rand(1, 12);
-            $turnData = GameTurns::create(['game_id' => $game->id, 'user_id' => $request->user()->id, 'data' => json_encode(['type' => 1, 'roll' => $roll]) ]);
-            return compact('roll');
+            $status = 0;
+            $turns->data = json_decode($turns->data);
+            $turns = [$turns];
         }
-        return false;
+        return compact('status');
     }
 
     /**
