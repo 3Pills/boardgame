@@ -11,7 +11,7 @@ To get this project working on a default windows computer, complete the followin
 	7a. Replace DB_DATABASE with the name of the newly created XAMPP database.
 	7b. Replace DB_USERNAME and DB_PASSWORD with the username and password for admin access to your phpMyAdmin (default is root and an empty password represented with '').
 8. Run 'php artisan key:generate' via command-line within the main project directory. If you have your php path set up properly, the APP_KEY in .env will be regenerated with a random key string.
-9. Run 'php artisan migrate:install' via the cmd in the project directory. This will set up the previously created database with all the tables / columns required by the application.
+9. Run 'php artisan migrate:install' and 'php artisan migrate:refresh' via the cmd in the project directory. This will set up the previously created database with all the tables / columns required by the application.
 
 DONE. You are good to use the service! See the instructions.txt for how to access the game.
 
